@@ -61,7 +61,10 @@ sub _create_line_handler {
 		return \&_plain_handler;
 	}
 	else {
-		return \&_normal_handler;
+		return sub {
+			my $line = shift;
+			return _normal_handler($line, $port);
+		};
 	}
 }
 
