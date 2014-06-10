@@ -1,3 +1,42 @@
+#!/usr/bin/perl
+
+use strict;
+use File::Spec::Functions;
+
+
+
+
+
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+package out;
+
+sub println {
+
+	print(@_, "\n");
+}
+
+
+
+
+
+
+
+
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+package main;
+
 sub _find_file {
 
 	my ($path, $handler) = @_;
@@ -9,10 +48,11 @@ sub _find_file {
 	}
 	elsif(-d $path) {
 		my $handle;
-		if(!opendir($handle $path)) {
-			print('[error] cannot open directory. path=[', $path, ']', "\n");
+		if(!opendir($handle, $path)) {
+			out::println('[error] cannot open directory. path=[', $path, ']');
 			return 1;
 		}
+		my $state = 1;
 		while(my $name = readdir($handle)) {
 			if($name eq '.') {
 				next;
@@ -20,11 +60,36 @@ sub _find_file {
 			if($name eq '..') {
 				next;
 			}
-			_find_file(File::Spec::Functions::catfile($path, $name), $handler);
+			$state = _find_file(File::Spec::Functions::catfile($path, $name), $handler);
+			if(!$state) {
+				last;
+			}
 		}
 		closedir($handle);
+		return $state;
 	}
 	else {
-		print('[error] unknown device. path=[', $path, ']', "\n");
+		out::println('[error] unknown device. path=[', $path, ']');
+		return 1;
 	}
 }
+
+sub _file_handler {
+
+	my ($path) = @_;
+
+
+
+	out::println('DETECTED: path=[', $path, ']');
+}
+
+sub _main {
+
+	my ($path) = @_;
+
+
+
+	_find_file($path, \&_file_handler);
+}
+
+_main(@ARGV);
