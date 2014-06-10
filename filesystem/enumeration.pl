@@ -96,6 +96,8 @@ sub _file_handler {
 
 
 	out::println('DETECTED: path=[', $path, ']');
+
+	return 1;
 }
 
 sub _main {
