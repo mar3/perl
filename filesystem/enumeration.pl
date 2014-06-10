@@ -1,4 +1,15 @@
 #!/usr/bin/perl
+# coding: utf-8
+#
+#
+# ファイル列挙
+#
+#
+#
+#
+#
+#
+#
 
 use strict;
 use File::Spec::Functions;
