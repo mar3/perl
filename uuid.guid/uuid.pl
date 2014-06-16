@@ -7,9 +7,9 @@ use strict;
 use Data::UUID;
 
 sub _main {
-	my $g = Data::UUID->new;
-	print($g->create_str(), "\n");
+
+	my $generator = Data::UUID->new;
+	print($generator->create_str(), "\n");
 }
 
 _main();
-
