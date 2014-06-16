@@ -73,17 +73,17 @@ my $g_app = new application;
 
 sub _on_signal {
 	my ($sign) = @_;
-	out::println('<_on_signal()> caught signal [', $sign, ']');
+	out::println('<_on_signal> caught signal [', $sign, ']');
 	$g_app->quit();
 }
 
 sub _main {
-	out::println('<_main()> ### start ###');
+	out::println('<_main> ### start ###');
 	foreach my $sign ('INT', 'TERM') {
 		$SIG{$sign} = '_on_signal';
 	}
 	$g_app->main();
-	out::println('<_main()> --- exit ---');
+	out::println('<_main> --- exit ---');
 }
 
 _main(@ARGV);
