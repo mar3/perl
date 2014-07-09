@@ -2,7 +2,6 @@
 
 ```
 if($s =~ m/\AXXX/) {
-	#yes
 }
 ```
 
@@ -10,7 +9,6 @@ if($s =~ m/\AXXX/) {
 
 ```
 if($s =~ m/ZZZ\z/ms) {
-	#yes
 }
 ```
 
