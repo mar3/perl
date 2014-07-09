@@ -1,7 +1,7 @@
 ##XXX で始まる
 
 ```
-if($s =~ m/\AXXX/) {
+if($s =~ m/\AXXX/ms) {
 }
 ```
 
