@@ -1,5 +1,14 @@
 #!/usr/bin/perl
 # coding: utf-8
+#
+#
+#
+# Perl で シグナル
+#
+#
+#
+#
+#
 
 use strict;
 
@@ -73,17 +82,18 @@ my $g_app = new application;
 
 sub _on_signal {
 	my ($sign) = @_;
-	out::println('<_on_signal> caught signal [', $sign, ']');
+	out::println('<main::_on_signal> caught signal [', $sign, ']');
 	$g_app->quit();
 }
 
 sub _main {
-	out::println('<_main> ### start ###');
+	out::println('<main::_main> ### start ###');
 	foreach my $sign ('INT', 'TERM') {
 		$SIG{$sign} = '_on_signal';
 	}
 	$g_app->main();
-	out::println('<_main> --- exit ---');
+	out::println('<main::_main> --- exit ---');
 }
 
-_main(@ARGV);
+main::_main(@ARGV);
+
