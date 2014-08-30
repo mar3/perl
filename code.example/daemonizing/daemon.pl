@@ -1,5 +1,14 @@
 #!/usr/bin/perl
 # coding: utf-8
+#
+#
+# Perl でデーモン
+#
+#
+#
+#
+#
+#
 
 use strict;
 use Data::Dumper;
@@ -161,11 +170,11 @@ sub _start {
 	#
 	$pid = $daemon->Init;
 	if(!$pid) {
-		logger::info('メイン処理 (pid=', $pid, ')');
+		# メイン処理
 		application::run();
 	}
 	else {
-		logger::info('シェル側 (pid=', $pid, ')');
+		# シェル側
 	}
 }
 
