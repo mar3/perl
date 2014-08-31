@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # coding: utf-8
 #
-# 簡単な初期化処理
+# OpenLDAP に簡単なツリーを作成する
 #
 
 use strict;
