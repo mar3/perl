@@ -1,4 +1,13 @@
 #!/usr/bin/perl
+# coding: utf-8
+#
+# SNMP を扱うサンプル
+#
+#
+#
+#
+#
+#
 
 use strict;
 use Net::SNMP;
