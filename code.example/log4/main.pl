@@ -13,7 +13,7 @@
 use strict;
 use Carp;
 use Log::Log4perl;
-
+use Time::HiRes;
 
 
 
@@ -39,6 +39,10 @@ sub subprocess {
 
 	my $logger = application::get_logger();
 	$logger->info('$$$ ○△□処理 開始 $$$');
+	foreach (0..4) {
+		$logger->debug('処理中...');
+		Time::HiRes::sleep(rand(6));
+	}
 	$logger->info('--- ○△□処理 終了 ---');
 }
 
