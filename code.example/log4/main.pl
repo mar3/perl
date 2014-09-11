@@ -25,13 +25,9 @@ use Time::HiRes;
 ###############################################################################
 package application;
 
-our $_logger = undef;
+
 sub get_logger {
 
-	if(defined($_logger)) {
-		return $_logger;
-	}
-	Log::Log4perl::init('conf/log4perl.conf');
 	return Log::Log4perl->get_logger('myapp1');
 }
 
@@ -41,13 +37,14 @@ sub subprocess {
 	$logger->info('$$$ ○△□処理 開始 $$$');
 	foreach (0..4) {
 		$logger->debug('処理中...');
-		Time::HiRes::sleep(rand(6));
+		Time::HiRes::sleep(rand(3));
 	}
 	$logger->info('--- ○△□処理 終了 ---');
 }
 
 sub run {
 
+	Log::Log4perl::init('conf/log4perl.conf');
 	my $logger = application::get_logger();
 
 	$logger->info('### start ###');
@@ -73,13 +70,6 @@ package main;
 sub _main {
 
 	application::run();
-}
-
-END {
-
-	if(defined($_logger)) {
-		$_logger = undef;
-	}
 }
 
 _main(@ARGV);
