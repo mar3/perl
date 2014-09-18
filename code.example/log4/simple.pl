@@ -4,6 +4,7 @@
 
 use strict;
 use Log::Log4perl;
+use Log::Log4perl::Appender::Screen;
 
 sub _main {
 
