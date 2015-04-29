@@ -1,3 +1,0 @@
-mail from: [% 'mail from' %]
-rcpt to: [% 'rcpt to' %]
-
