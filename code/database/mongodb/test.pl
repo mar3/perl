@@ -1,5 +1,14 @@
 #!/usr/bin/env perl
 # coding: utf-8
+#
+#
+#
+# Perl で MongoDB を操作する
+#
+#
+#
+#
+#
 
 
 use strict;
@@ -36,7 +45,7 @@ sub _dump2 {
  
 	my $e = shift;
  
-	$e = JSON::to_json($e, { utf8 => 1, pretty => 1, convert_blessed => 1 });
+	$e = JSON::to_json($e, { utf8 => 1, convert_blessed => 1 });
 	$e = JSON::from_json($e);
  
 	_println('_id: ', $e->{'_id'});
@@ -61,9 +70,13 @@ sub _main {
 	# my $id = $collection->insert({ some => 'data' });
 
 	my $cursor = $collection->find({});
+
 	foreach my $e ($cursor->next()) {
+
 		delete($e->{'_id'});
+
 		_dump1($e);
+
 		# _dump2($e);
 	}
 }
