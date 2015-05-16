@@ -33,7 +33,8 @@ sub _dump1 {
  
 	my $e = shift;
 
-	$e = JSON::to_json($e, { utf8 => 1, pretty => 1, convert_blessed => 1 });
+	$e = JSON::to_json($e, { utf8 => 1, convert_blessed => 1 });
+	# $e = JSON::to_json($e, { utf8 => 1, pretty => 1, convert_blessed => 1 });
 
 	_println($e);
 }
@@ -71,7 +72,7 @@ sub _main {
 
 	my $cursor = $collection->find({});
 
-	foreach my $e ($cursor->next()) {
+	while (my $e = $cursor->next()) {
 
 		delete($e->{'_id'});
 
