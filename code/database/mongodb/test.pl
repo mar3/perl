@@ -13,7 +13,6 @@
 
 use strict;
 use MongoDB;
-use Data::Dumper;
 use JSON;
 use Encode;
 
@@ -55,10 +54,6 @@ sub _dump2 {
 }
  
 sub _main {
- 
-	local $Data::Dumper::Indent = 1;
-	local $Data::Dumper::Sortkeys = 1;
-	local $Data::Dumper::Terse = 1;
  
 	my $client = MongoDB::MongoClient->new(
 			host => '192.168.141.128',
