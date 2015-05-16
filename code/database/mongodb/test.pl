@@ -69,7 +69,7 @@ sub _main {
 
 	while (my $e = $cursor->next()) {
 
-		delete($e->{'_id'});
+		# delete($e->{'_id'});
 
 		_dump1($e);
 
