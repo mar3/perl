@@ -57,9 +57,17 @@ sub _main {
 	my $s = '友利奈緒';
 	utf8::decode($s);
 	my $r = $nt->search($s);
-	$r = YAML::Dump($r);
-	utf8::encode($r);
-	_println($r);
+	$r = $r->{'statuses'};
+	foreach my $e (@$r) {
+		# print YAML::Dump($e); next;
+		my $line = sprintf(
+			'%s <%s>: %s',
+			$e->{'created_at'},
+			$e->{'user'}->{'screen_name'},
+			$e->{'text'});
+		utf8::encode($line);
+		_println($line);
+	}
 }
 
 main::_main(@ARGV);

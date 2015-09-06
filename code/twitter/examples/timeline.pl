@@ -62,15 +62,13 @@ sub _main {
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
 
-	# my $text = 'hello! #test';
-	# utf8::decode($text);
-	# my $result = $t->update($text);
-	# print(Dumper($result));
-
-	# my $statuses = $t->home_timeline({ count => 100 });
 	my $statuses = $t->home_timeline({ count => 100 });
 	for my $status ( @$statuses ) {
-		my $line = "$status->{created_at} <$status->{user}{screen_name}> $status->{text}";
+		my $line = sprintf(
+			'%s <@%s> %s',
+			$status->{created_at},
+			$status->{user}{screen_name},
+			$status->{text});
 		$line = _normalize($line);
 		_println($line);
 	}
