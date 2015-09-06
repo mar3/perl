@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 # coding: utf-8
+#
+# Twitter のテスト
+#
 
 use strict;
 use Encode;
@@ -50,7 +53,12 @@ sub _main {
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
 
-	my $text = 'hello! #test';
+	print('Tweet or Ctrl+C> ');
+	my $text = '';
+	while(my $line = <STDIN>) {
+		if($line eq ".\n") { last }
+		$text .= $line;
+	}
 	utf8::decode($text);
 	my $result = $t->update($text);
 	print(Dumper($result));

@@ -1,12 +1,16 @@
 #!/usr/bin/env perl
 # coding: utf-8
+#
+# Twitter のテスト
 
 use strict;
 use Encode;
+use Getopt::Long;
 use Net::Twitter;
 use Data::Dumper;
 use File::Spec::Functions;
 use YAML;
+use Cwd;
 
 
 local $Data::Dumper::Indent = 1;
@@ -28,7 +32,7 @@ sub _configure {
 	my $path = File::Spec::Functions::catfile($home, '.twitter-settings.yml');
 	my $stream = undef;
 	if(!open($stream, $path)) {
-		_println('[warn] cannot open [', $path, ']');
+		_println('[ERROR] cannot open [', $path, ']');
 		return undef;
 	}
 	my $settings = YAML::LoadFile($path);
@@ -38,22 +42,28 @@ sub _configure {
 
 sub _main {
 
+	# my $option_help = 0;
+	# Getopt::Long::GetOptions(
+			# 'help!' => \$option_help);
+
 	my $settings = _configure();
 	if(!defined($settings)) {
 		return;
 	}
 
-	my $t = Net::Twitter->new(
+	my $nt = Net::Twitter->new(
 		traits => ['API::RESTv1_1'],
 		consumer_key => $settings->{'consumer_key'},
 		consumer_secret => $settings->{'consumer_secret'},
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
 
-	my $text = 'hello! #test';
-	utf8::decode($text);
-	my $result = $t->update($text);
-	print(Dumper($result));
+	my $s = '友利奈緒';
+	utf8::decode($s);
+	my $r = $nt->search($s);
+	$r = YAML::Dump($r);
+	utf8::encode($r);
+	_println($r);
 }
 
 main::_main(@ARGV);
