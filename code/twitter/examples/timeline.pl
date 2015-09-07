@@ -67,7 +67,7 @@ sub _main {
 		my $line = sprintf(
 			'%s <@%s> %s',
 			$status->{created_at},
-			$status->{user}{screen_name},
+			$status->{user}->{screen_name},
 			$status->{text});
 		$line = _normalize($line);
 		_println($line);

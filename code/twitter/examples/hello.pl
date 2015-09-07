@@ -50,7 +50,7 @@ sub _main {
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
 
-	my $text = 'hello! #test';
+	my $text = 'hello!';
 	utf8::decode($text);
 	my $result = $t->update($text);
 	print(Dumper($result));
