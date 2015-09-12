@@ -64,15 +64,24 @@ sub _main {
 
 	my $resultset = $t->friends();
 	my $users = $resultset->{'users'};
+
 	for my $e (@$users) {
-		# $e = _normalize($e);
-		# $e = YAML::Dump($e);
-		# $e = _normalize($e);
+
+		$e = _normalize($e);
+		$e = YAML::Dump($e);
+		$e = _normalize($e);
+
+		_println($e);
+		_println();
+
+		next;
+
 		_println(
 			'screen_name: ', _normalize($e->{'screen_name'}),
 			', name: ', _normalize($e->{'name'}),
 			', location: ', _normalize($e->{'location'}),
 			', description: ', _normalize($e->{'description'}));
+
 		# _println($e);
 	}
 }
