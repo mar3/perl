@@ -38,6 +38,8 @@ sub _configure {
 
 sub _main {
 
+	my ($s) = @_;
+
 	# my $option_help = 0;
 	# Getopt::Long::GetOptions(
 			# 'help!' => \$option_help);
@@ -54,7 +56,9 @@ sub _main {
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
 
-	my $s = '友利奈緒';
+	if(!length($s)) {
+		$s = '友利奈緒';
+	}
 	utf8::decode($s);
 	my $r = $nt->search($s);
 	$r = $r->{'statuses'};
