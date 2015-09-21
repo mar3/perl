@@ -46,22 +46,29 @@ sub _main {
 		return;
 	}
 
+	print('Tweet or Ctrl+C> ');
+
+	my $text = '';
+	while(my $line = <STDIN>) {
+		if($line eq ".\n") { last }
+		$text .= $line;
+	}
+
+	if(!length($text)) {
+		_println('[info] キャンセル');
+		return;
+	}
+
+	utf8::decode($text);
+
 	my $t = Net::Twitter->new(
 		traits => ['API::RESTv1_1'],
 		consumer_key => $settings->{'consumer_key'},
 		consumer_secret => $settings->{'consumer_secret'},
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
-
-	print('Tweet or Ctrl+C> ');
-	my $text = '';
-	while(my $line = <STDIN>) {
-		if($line eq ".\n") { last }
-		$text .= $line;
-	}
-	utf8::decode($text);
 	my $result = $t->update($text);
-	print(Dumper($result));
+	print(YAML::Dump($result));
 }
 
 main::_main(@ARGV);
