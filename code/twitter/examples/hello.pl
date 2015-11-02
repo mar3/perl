@@ -28,8 +28,7 @@ sub _configure {
 	my $path = File::Spec::Functions::catfile($home, '.twitter-settings.yml');
 	my $stream = undef;
 	if(!open($stream, $path)) {
-		_println('[warn] cannot open [', $path, ']');
-		return undef;
+		die('[warn] cannot open [', $path, ']');
 	}
 	my $settings = YAML::LoadFile($path);
 	# print Dumper($settings);
@@ -43,6 +42,10 @@ sub _main {
 		return;
 	}
 
+	my $text = 'てすてすてす #test';
+
+	utf8::decode($text);
+
 	my $t = Net::Twitter->new(
 		traits => ['API::RESTv1_1'],
 		consumer_key => $settings->{'consumer_key'},
@@ -50,11 +53,9 @@ sub _main {
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
 
-	my $text = 'hello!';
-	utf8::decode($text);
 	my $result = $t->update($text);
+
 	print(Dumper($result));
 }
 
 main::_main(@ARGV);
-
