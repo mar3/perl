@@ -41,6 +41,7 @@ sub _main {
 	_append_to_file('.bash_profile', 'export PATH="$PYENV_ROOT/bin:$PATH"');
 	_append_to_file('.bash_profile', 'eval "$(pyenv init -)"');
 	_append_to_file('.bash_profile', '');
+	_println('[INFO] Ready. Restart your shell to enjoy pyenv.');
 }
 
 _main(@ARGV);
