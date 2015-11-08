@@ -2,7 +2,6 @@
 # coding: utf-8
 
 use strict;
-use File::Spec::Functions;
 
 sub _println {
 
