@@ -29,19 +29,11 @@ sub _append_to_file {
 sub _main {
 
 	chdir();
-
-
-
-
 	if(-d '.pyenv') {
 		_println('[INFO] $HOME/.pyenv/ already exists.');
 		return;
 	}
-
-
-
 	system('git', 'clone', 'https://github.com/yyuu/pyenv.git', '.pyenv');
-
 	_append_to_file('.bash_profile', '');
 	_append_to_file('.bash_profile', '# ', _get_timestamp());
 	_append_to_file('.bash_profile', '# for pyenv.');
@@ -52,3 +44,6 @@ sub _main {
 }
 
 _main(@ARGV);
+
+# execute as below to setup [$HOME/.pyenv].
+# curl https://raw.githubusercontent.com/mass10/perl.note/master/code/pyenv/setup-pyenv.pl | perl
