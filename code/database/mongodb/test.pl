@@ -56,7 +56,7 @@ sub _dump2 {
 sub _main {
  
 	my $client = MongoDB::MongoClient->new(
-			host => '192.168.141.128',
+			host => '127.0.0.1',
 			port => 27017);
 
 	my $database = $client->get_database('test');
