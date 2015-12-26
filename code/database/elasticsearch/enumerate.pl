@@ -14,7 +14,7 @@ sub _println {
 
 sub _open_connection {
 
-	my $connection = Search::Elasticsearch->new(nodes => ['192.168.141.160:9200']);
+	my $connection = Search::Elasticsearch->new(nodes => ['127.0.0.1:9200']);
 	return $connection;
 }
 
@@ -25,7 +25,17 @@ sub _search_random {
 		_println('[WARN] "sake_databse" not found.');
 		return;
 	}
-	my $results = $connection->search(index => 'sake_database', body => {});
+	my $results = $connection->search(
+		index => 'sake_database',
+		body => {
+			size => 9999,
+			query => {
+				match => {
+					content => '生',
+				}
+			}
+		}
+	);
 	my $hits = $results->{hits};
 
 	# _println(YAML::Dump($hits));

@@ -107,11 +107,11 @@ sub _print {
 
 	my ($t, $option_type, $next_cursor) = @_;
 
-	# my $params = {};
-	# if(length($next_cursor)) {
-	# 	$params->{cursor} = $next_cursor;
-	# }
-	my $resultset = $t->friends({cursor => $next_cursor});
+	my $params = {};
+	if(length($next_cursor)) {
+		$params->{cursor} = $next_cursor;
+	}
+	my $resultset = $t->friends($params);
 	if(!defined($resultset)) {
 		return 0;
 	}
