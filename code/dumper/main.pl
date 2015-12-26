@@ -2,17 +2,23 @@
 # coding: utf-8
 
 use strict;
+use utf8;
 use Data::Dumper;
+use YAML::XS;
 
 sub _main {
 
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
+
 	my $struct = {
-		'key1' => 'value 1',
-		'key2' => {
-			'key2-1' => 'value 2-1',
-			'key2-2' => [ 'value 2-2-1', 'value 2-2-2', 'value 2-2-3' ]
+		'氏名' => {'姓' => '新渡戸', '名' => '稲造'},
+		'メールアドレス' => 'inazo-funkadelic@gmail.com',
+		'住所' => {'都道府県' => '東京都新宿区新宿1-1',
+			'郵便番号' => '897-0019',
+			'建物名称' => ''
 		},
-		'key3' => 'value 3',
 	};
 
 	local $Data::Dumper::Indent = 1;
@@ -23,4 +29,3 @@ sub _main {
 }
 
 _main();
-
