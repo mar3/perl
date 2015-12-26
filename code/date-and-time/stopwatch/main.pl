@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
+# coding: utf-8
 
 use strict;
 use stopwatch;
 use Time::HiRes;
 
 sub _main {
-
 
 	my $s = new stopwatch();
 
