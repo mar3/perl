@@ -87,6 +87,8 @@ sub _main {
 
 		_println(Data::Dumper::Dumper($dataset));
 	}
+
+	unlink($path);
 }
 
 _main(@ARGV);
