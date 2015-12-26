@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 # coding: utf-8
+#
+# 標準入力を読む
+#
 
 use strict;
 use utf8;
