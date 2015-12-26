@@ -39,7 +39,7 @@ sub _main {
 	$tree = JSON::from_json($text);
 	_println(YAML::Dump($tree));
 
-	$text = JSON::to_json($tree);
+	$text = JSON::to_json($tree, { pretty => 1 });
 	_println('[info] HASH -> JSON: ', $text);
 }
 
