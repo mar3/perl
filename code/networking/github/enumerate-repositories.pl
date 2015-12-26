@@ -39,10 +39,31 @@ sub _main {
 
 
 
+
+	#
+	# カレントディレクトリの隠しファイルからアクセストークンを読み取っています。
+	#
+
 	my $access_token = `cat .access_token`;
+
+
+
+	#
+	# アカウント名とパスワードを使用する代わりにアクセストークンを使用し
+	# て GitHub API を呼び出します。アクセストークンは、GitHub の [Settings]
+	# で生成したものを使用します。
+	#
+
 	my $github = Net::GitHub->new(  # Net::GitHub::V3
 		access_token => $access_token
 	);
+
+
+
+
+	#
+	# ユーザーが所有するリポジトリを全て表示しています。
+	#
 
 	_println('#');
 	_println('# Showing all your repositories.');
