@@ -39,33 +39,17 @@ sub _main {
 
 
 
-
-	#
-	# token
-	#
-
 	my $access_token = `cat .access_token`;
-
-	#
-	# starting
-	#
-
 	my $github = Net::GitHub->new(  # Net::GitHub::V3
 		access_token => $access_token
 	);
-
-	#
-	# enumerating repositories.
-	#
 
 	_println('#');
 	_println('# Showing all your repositories.');
 	_println('#');
 
 	my $repos = $github->repos->list;
-
 	my $repository_count = 0;
-
 	foreach my $e (@$repos) {
 
 		# fields of entry.
@@ -145,17 +129,10 @@ sub _main {
 			created_at => $e->{created_at},
 			updated_at => $e->{updated_at},
 		};
-
 		my $json_text = JSON::to_json($data, {pretty => 0});
-
 		_println($json_text);
-
 		$repository_count++;
 	}
-
-	#
-	# summary
-	#
 
 	_println($repository_count, ' repository detected.');
 }
