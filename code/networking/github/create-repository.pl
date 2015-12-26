@@ -1,25 +1,11 @@
 #!/usr/bin/env perl
 # coding: utf-8
 #
-#
-# Perl で GitHub を操作するサンプル
-#
-#
-#
-#
-
-
-
-
-
-
-
 
 
 use strict;
 use utf8;
 use Net::GitHub;
-use JSON;
 
 
 
