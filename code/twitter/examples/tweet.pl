@@ -5,6 +5,7 @@
 #
 
 use strict;
+use utf8;
 use Encode;
 use Net::Twitter;
 use Data::Dumper;
@@ -41,6 +42,12 @@ sub _configure {
 
 sub _main {
 
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
+
+
+
 	my $settings = _configure();
 	if(!defined($settings)) {
 		return;
@@ -59,7 +66,8 @@ sub _main {
 		return;
 	}
 
-	utf8::decode($text);
+	# 不要
+	# utf8::decode($text);
 
 	my $t = Net::Twitter->new(
 		traits => ['API::RESTv1_1'],
