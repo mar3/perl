@@ -21,10 +21,12 @@ sub _open_connection {
 sub _search_random {
 
 	my $connection = _open_connection();
+
 	if(!$connection->indices->exists(index => 'sake_database')) {
 		_println('[WARN] "sake_databse" not found.');
 		return;
 	}
+
 	my $results = $connection->search(
 		index => 'sake_database',
 		body => {
@@ -42,6 +44,7 @@ sub _search_random {
 
 	_println('max_score=', $hits->{max_score});
 	_println('total=', $hits->{total});
+
 	foreach my $e (@{$hits->{hits}}) {
 		_println(JSON::to_json($e, {pretty => 1}));
 	}
