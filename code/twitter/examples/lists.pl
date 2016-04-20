@@ -2,6 +2,7 @@
 # coding: utf-8
 
 use strict;
+use utf8;
 use Encode;
 use Net::Twitter;
 use Data::Dumper;
@@ -53,6 +54,8 @@ sub _normalize {
 
 	my $s = shift;
 
+	return $s;
+
 
 
 
@@ -101,6 +104,12 @@ sub _enum_member {
 }
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
+
+
 
 	my $settings = _configure();
 	if(!defined($settings)) {

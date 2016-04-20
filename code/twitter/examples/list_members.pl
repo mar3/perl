@@ -2,6 +2,7 @@
 # coding: utf-8
 
 use strict;
+use utf8;
 use Encode;
 use Net::Twitter;
 use Data::Dumper;
@@ -35,26 +36,6 @@ sub _configure {
 	my $settings = YAML::LoadFile($path);
 	# print Dumper($settings);
 	return $settings;
-}
-
-sub _normalize {
-
-	my $s = shift;
-
-
-
-
-
-
-	if(!length($s)) {
-		return '';
-	}
-
-	if(utf8::is_utf8($s)) {
-		utf8::encode($s);
-	}
-
-	return $s;
 }
 
 sub _enum_member {
@@ -96,7 +77,6 @@ sub _enum_member {
 		};
 
 		$t = JSON::to_json($t);
-		$t = _normalize($t);
 
 		_println($t);
 
@@ -125,14 +105,14 @@ sub _main {
 
 
 
-
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	my $settings = _configure();
 	if(!defined($settings)) {
 		return;
 	}
-
-
 
 	my $t = Net::Twitter->new(
 		traits => ['API::RESTv1_1'],
