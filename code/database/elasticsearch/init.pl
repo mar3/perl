@@ -53,16 +53,16 @@ sub _erase_all {
 
 sub _regist_new_sake {
 
-	my ($name, $description) = @_;
+	my ($name, @description) = @_;
 	my $connection = _open_connection();
 	my $id = _create_uuid();
 	$connection->index(
 		index => 'sake_database',
-		type => 'sake_entry',
+		type => '日本酒',
 		id => $id,
 		body => {
-			title => $name,
-			content => $description,
+			product_name => $name,
+			attributes => @description,
 			date => _get_date(),
 			datetime => _get_timestamp(),
 			生産者 => 'Unknown'
@@ -79,14 +79,14 @@ sub _main {
 
 	_erase_all();
 
-	_regist_new_sake('旭若松', '純米生 しっかりめ どっしり 甘口');
-	_regist_new_sake('仙禽', '純米生 しっかりめ どっしり 甘口 酸味');
-	_regist_new_sake('悦凱陣', '純米生 しっかりめ どっしり 甘口');
-	_regist_new_sake('十旭', '純米 しっかりめ どっしり 甘口');
-	_regist_new_sake('陸奥八仙', '純米 華やか 香り 甘口');
-	_regist_new_sake('隆', '純米 どっしり 旨口');
-	_regist_new_sake('秋鹿', '純米 どっしり 旨口');
-	_regist_new_sake('神渡', '純米生 どっしり 甘口 ややべたつきあり');
+	_regist_new_sake('旭若松', ['純米生', 'しっかりめ', 'どっしり', '甘口']);
+	_regist_new_sake('仙禽', ['純米生', 'しっかりめ', 'どっしり', '甘口', '酸味']);
+	_regist_new_sake('悦凱陣', ['純米生', 'しっかりめ', 'どっしり', '甘口']);
+	_regist_new_sake('十旭', ['純米', 'しっかりめ', 'どっしり', '甘口']);
+	_regist_new_sake('陸奥八仙', ['純米', '華やか', '香り', '甘口']);
+	_regist_new_sake('隆', ['純米', 'どっしり', '旨口']);
+	_regist_new_sake('秋鹿', ['純米', 'どっしり', '旨口']);
+	_regist_new_sake('神渡', ['純米生', 'どっしり', '甘口', 'ややべたつき感']);
 
 	_println('[INFO] ok.');
 }
