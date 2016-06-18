@@ -43,7 +43,10 @@ sub _get_github_issue {
 
 sub _enum_volunteers {
 
+	# 問題のイシューを読みます
 	my $content = _get_github_issue();
+
+	# 行にバラしてユーザーを探します
 	my @lines = split("\n", $content);
 	my $volunteers = {};
 	foreach my $line (@lines) {
@@ -59,6 +62,8 @@ sub _enum_volunteers {
 sub _show {
 
 	my @volunteers = @_;
+
+	# ファイルに吐き出して sort！！！
 	my $stream;
 	open($stream, '>/tmp/.yapc8oji-volunteers.tmp');
 	foreach my $user (sort(@volunteers)) {
@@ -75,8 +80,10 @@ sub _main {
 	binmode(STDOUT, ':utf8');
 	binmode(STDERR, ':utf8');
 
+	# ボランティアスタッフの人を収集します
 	my @volunteers = _enum_volunteers();
 
+	# 表示します
 	_show(@volunteers);
 }
 
