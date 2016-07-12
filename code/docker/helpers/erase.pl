@@ -2,6 +2,7 @@
 # coding: uttf-8
 
 use strict;
+use utf8;
 use Data::Dumper;
 
 sub _is_header_line {
@@ -82,6 +83,10 @@ sub _erase {
 }
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	_erase();
 }
