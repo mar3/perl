@@ -17,6 +17,33 @@ sub _println {
 	print(@_, "\n");
 }
 
+sub _get_filetime0 {
+
+	my ($path) = @_;
+
+	if(! -f $path) {
+		die();
+	}
+	my @timestruct = stat($path);
+	my $filetime = @timestruct[9];
+	# my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdat) = localtime($filetime);
+	# $filetime = sprintf('%04d-%02d-%02d %02d:%02d:%02d', 1900 + $year, 1 + $mon, $mday, $hour, $min, $sec);
+	return $filetime;
+}
+
+sub _paste_filetime {
+
+	my ($left, $right) = @_;
+	if(! -f $left) {
+		die();
+	}
+	if(! -f $right) {
+		die();
+	}
+	my $filetime = _get_filetime0($left);
+	utime($filetime, $filetime, $right);
+}
+
 sub _confirm {
 
 	print(@_, "\n(y/N)>");
@@ -35,7 +62,6 @@ sub _install {
 
 	my ($left, $right, $verbose) = @_;
 	if(-d $left) {
-		# _println('[info] copy ... [', $left, ']');
 		my $handle;
 		if(!opendir($handle, $left)) {
 			die();
@@ -69,6 +95,7 @@ sub _install {
 				return;
 			}
 			system("/bin/cp", $left, $right);
+			_paste_filetime($left, $right);
 		}
 	}
 }
