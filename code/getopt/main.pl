@@ -6,6 +6,7 @@
 #
 #
 
+use utf8;
 use strict;
 use Getopt::Long;
 
@@ -25,6 +26,10 @@ sub _usage {
 }
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	my $option_help = undef;
 	my $option_protocol = undef;
