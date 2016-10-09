@@ -4,10 +4,10 @@
 # JSON 変換のサンプル
 #
 use strict;
+use utf8;
 use JSON;
 use Data::Dumper;
 use Encode;
-use utf8;
 use YAML;
 
 
