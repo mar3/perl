@@ -11,9 +11,12 @@ sub _main {
 	binmode(STDOUT, ':utf8');
 	binmode(STDERR, ':utf8');
 
-	my $query_string = '東京都新宿区新宿1-1';
+	my ($query_string) = @_;
+	if(!length($query_string)) {
+		$query_string = '東京都新宿区新宿1-1';
+	}
 	$query_string = URI::Escape::uri_escape_utf8($query_string);
 	print('[', $query_string, ']', "\n");
 }
 
-_main();
+_main(@ARGV);
