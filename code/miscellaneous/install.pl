@@ -129,7 +129,7 @@ sub _main {
 		return;
 	}
 	if(! -e $destination) {
-		if(_confirm('この新しいディレクトリを作成しますか？ [', $destination, ']')) {
+		if(_confirm('Create a new directory? [', $destination, ']')) {
 			mkdir($destination);
 		}
 	}
