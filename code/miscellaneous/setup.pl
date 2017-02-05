@@ -29,6 +29,66 @@ sub println {
 
 
 
+
+
+
+
+
+
+
+
+package file_backup;
+
+sub _datetime {
+
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdat) = localtime();
+	return sprintf('%04d%02d%02d-%02d%02d%02d',
+		1900 + $year, 1 + $mon, $mday, $hour, $min, $sec);
+}
+
+sub _make_path_name {
+
+	my ($path, $datetime, $i) = @_;
+	if ($i == 0) {
+		return sprintf('%s.%s', $path, $datetime);
+	}
+	else {
+		return sprintf('%s.%s.%s', $path, $datetime, $i);
+	}
+}
+
+sub backup {
+
+	my ($path) = @_;
+
+
+
+	if(!-f $path) {
+		return;
+	}
+
+	my $datetime = _datetime();
+	for(my $i = 0; $i < 1000; $i++) {
+		my $pathname = _make_path_name($path, $datetime, $i);
+		if (-f $pathname) {
+			next;
+		}
+		system('/bin/cp', $path, $pathname);
+		last;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
 package directory;
 
 sub cd_home {
@@ -115,6 +175,15 @@ sub trim {
 	return $line;
 }
 
+sub append_line {
+
+	my ($path, @items) = @_;
+	my $stream = undef;
+	open($stream, '>>', $path);
+	print($stream @items, "\n");
+	close($stream);
+}
+
 
 
 
@@ -168,6 +237,57 @@ sub confirm {
 
 package amazon_linux;
 
+sub _setup_bash_aliases {
+
+	directory::cd_home();
+	out::println('setting up [~/.bash_aliases]');
+
+	file_backup::backup('.bash_aliases');
+
+	if (! -f '.bash_aliases') {
+		system('touch', '.bash_aliases');
+	}
+
+	my $stream = undef;
+	open($stream, '.bash_aliases');
+	my $target = {};
+	while (my $line = <$stream>) {
+		$line = util::trim($line);
+		if (0 == index($line, '#')) {
+			next;
+		}
+		if (0 <= index($line, 'alias l=')) {
+			$target->{'l'}++;
+		}
+		elsif (0 <= index($line, 'alias n=')) {
+			$target->{'n'}++;
+		}
+		elsif (0 <= index($line, 'alias u=')) {
+			$target->{'u'}++;
+		}
+		elsif (0 <= index($line, 'alias g=')) {
+			$target->{'g'}++;
+		}
+	}
+	close($stream);
+
+	# appending if needed...
+	if (!$target->{l}) {
+		util::append_line('.bash_aliases', 'alias l=\'/bin/ls -lF --full-time\'');
+	}
+	if (!$target->{n}) {
+		util::append_line('.bash_aliases', 'alias n=\'/bin/ls -ltrF --full-time\'');
+	}
+	if (!$target->{u}) {
+		util::append_line('.bash_aliases', 'alias u=\'cd ..\'');
+	}
+	if (!$target->{g}) {
+		util::append_line('.bash_aliases', 'alias g=\'git\'');
+	}
+
+	out::println('setting up [~/.bash_aliases] ok.');
+}
+
 sub _setup_bash {
 
 	if (!prompt::confirm('bash_aliases のセットアップをしますか？')) {
@@ -176,28 +296,39 @@ sub _setup_bash {
 	}
 
 	directory::cd_home();
-	my $stream;
+
+	file_backup::backup('.bashrc');
+
+	my $stream = undef;
 	open($stream, '.bashrc');
-	my $read_bash_profile = 0;
+	my $target = {};
 	while (my $line = <$stream>) {
 		$line = util::trim($line);
 		if (0 == index($line, '#')) {
 			next;
 		}
 		if ((0 <= index($line, '-f')) && (0 <= index($line, '.bash_aliases'))) {
-			$read_bash_profile = 1;
+			$target->{read_bash_profile}++;
+		}
+		elsif ((0 <= index($line, 'export')) && (0 <= index($line, 'EDITOR'))) {
+			$target->{editor_setting}++;
 		}
 	}
-	if ($read_bash_profile) {
-		return;
+	close($stream);
+
+	if (!$target->{read_bash_profile}) {
+		util::append_line('.bashrc', "\n");
+		util::append_line('.bashrc', 'if [ -f ~/.bash_aliases ]; then');
+		util::append_line('.bashrc', '	. ~/.bash_aliases');
+		util::append_line('.bashrc', 'fi');
+		util::append_line('.bashrc', "\n");
 	}
-	close($stream);
-	open($stream, '>>.bashrc');
-	print($stream "\n");
-	print($stream 'if [ -f ~/.bash_aliases ]; then', "\n");
-	print($stream '	. ~/.bash_aliases', "\n");
-	print($stream 'fi', "\n");
-	close($stream);
+
+	if (!$target->{editor_setting}) {
+		util::append_line('.bashrc', "\n");
+		util::append_line('.bashrc', 'export EDITOR=vim');
+		util::append_line('.bashrc', "\n");
+	}
 }
 
 sub _setup_vim {
@@ -230,7 +361,7 @@ sub _setup_vim {
 		'https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim',
 		'--output-document',
 		'/usr/share/vim/vimfiles/colors/molokai.vim');
-	out::println('[Vim] ready.');
+	out::println('[Vim] ok.');
 }
 
 sub _sudo_test_directory {
@@ -253,12 +384,13 @@ sub _setup_cpanm {
 	system('sudo', 'mkdir', '-p', '/root/bin');
 	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
 	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
-	out::println('[cpanm] ready.');
+	out::println('[cpanm] ok.');
 }
 
 sub setup {
 
 	_setup_bash();
+	_setup_bash_aliases();
 	_setup_vim();
 	_setup_cpanm();
 }
