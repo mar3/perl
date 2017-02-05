@@ -387,10 +387,33 @@ sub _setup_cpanm {
 	out::println('[cpanm] ok.');
 }
 
+sub _has_git_installed {
+
+	return 0;
+	my $stream = undef;
+	open($stream, 'git --version |');
+	my $line = <$stream>;
+	close($stream);
+	if (-1 == index($line, 'git version')) {
+		return 0;
+	}
+	return 1;
+}
+
+sub _setup_git {
+
+	out::println('[git] begin setting.');
+	if (!_has_git_installed()) {
+		system('sudo', 'yum', 'install', 'git');
+	}
+	out::println('[git] ok.');
+}
+
 sub setup {
 
 	_setup_bash();
 	_setup_bash_aliases();
+	_setup_git();
 	_setup_vim();
 	_setup_cpanm();
 }
