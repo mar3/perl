@@ -4,7 +4,6 @@
 use strict;
 use utf8;
 use MIME::Base64;
-use Data::Dumper;
 
 sub _attach_stdin {
 
