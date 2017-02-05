@@ -13,12 +13,38 @@ use Cwd;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package out;
 
 sub println {
 
 	print(@_, "\n");
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -89,6 +115,28 @@ sub backup {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package directory;
 
 sub cd_home {
@@ -110,6 +158,32 @@ sub cd_to {
 	}
 	die();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -199,6 +273,30 @@ sub append_line {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package prompt;
 
 sub confirm {
@@ -216,6 +314,38 @@ sub confirm {
 	}
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -417,6 +547,27 @@ sub setup {
 	_setup_vim();
 	_setup_cpanm();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
