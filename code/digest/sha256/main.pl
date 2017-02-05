@@ -8,7 +8,8 @@ use Digest::SHA;
 
 sub _main {
 
-	my $s = Digest::SHA::sha256_hex('abc');
+	my ($s) = @_;
+	$s = Digest::SHA::sha256_hex($s);
 	print('[', $s, ']', "\n");
 }
 
