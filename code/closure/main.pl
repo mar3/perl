@@ -36,6 +36,10 @@ sub _sub {
 
 sub _main {
 
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
+
 	my $logging = _get_logger();
 	$logging->('hello');
 	_sub();
