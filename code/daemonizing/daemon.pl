@@ -238,6 +238,10 @@ sub _usage {
 
 sub _main {
 
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
+
 	my $action_help = '';
 	my $action_start = '';
 	my $action_status = '';
