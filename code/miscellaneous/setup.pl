@@ -586,6 +586,42 @@ sub setup {
 
 
 
+
+
+
+package ubuntu;
+
+sub setup {
+	
+	_setup_bash();
+}
+
+sub _setup_bash {
+
+	if (!prompt::confirm('bash_aliases のセットアップをしますか？')) {
+		out::println('canceled.');
+		return;
+	}
+	directory::cd_home();
+	file_backup::backup('.bashrc');
+	file_backup::backup('.bash_aliases');
+	if (! -f '.bash_aliases') {
+		system('touch', '.bash_aliases');
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 package main;
 
 sub _diagnose_os {
@@ -598,16 +634,16 @@ sub _diagnose_os {
 			$name = 'Amazon Linux';
 		}
 		elsif (0 <= index($line, 'CentOS')) {
-			$name = 'Amazon Linux';
+			$name = 'CentOS';
 		}
-		elsif (0 <= index($line, 'RedHat Enterprise Linux')) {
-			$name = 'Amazon Linux';
+		elsif (0 <= index($line, 'Red Hat Enterprise Linux')) {
+			$name = 'Red Hat Enterprise Linux';
 		}
 		elsif (0 <= index($line, 'Ubuntu')) {
-			$name = 'Amazon Linux';
+			$name = 'Ubuntu';
 		}
 		elsif (0 <= index($line, 'Debian')) {
-			$name = 'Amazon Linux';
+			$name = 'Debian';
 		}
 	}
 	close($stream);
@@ -623,6 +659,10 @@ sub _main {
 	if ('Amazon Linux' eq _diagnose_os()) {
 		out::println('[info] Great! Amazon Linux found!');
 		amazon_linux::setup();
+	}
+	elsif ('Ubuntu' eq _diagnose_os()) {
+		out::println('[info] Great! Ubuntu is the most elegant!');
+		ubuntu::setup();
 	}
 	else {
 		out::println('[warn] unknown os. nothing todo...');
