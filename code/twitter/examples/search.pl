@@ -4,6 +4,7 @@
 # Twitter のテスト
 
 use strict;
+use utf8;
 use Encode;
 use Getopt::Long;
 use Net::Twitter;
@@ -44,6 +45,10 @@ sub _main {
 	# Getopt::Long::GetOptions(
 			# 'help!' => \$option_help);
 
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
+
 	my $settings = _configure();
 	if(!defined($settings)) {
 		return;
@@ -60,7 +65,11 @@ sub _main {
 		$s = '友利奈緒';
 	}
 	utf8::decode($s);
-	my $r = $nt->search($s);
+	my $r = $nt->search($s, {
+		include_rts => 0,
+		exclude_replies => 1,
+		count => 100,
+	});
 	$r = $r->{'statuses'};
 	foreach my $e (@$r) {
 		# print YAML::Dump($e); next;
@@ -69,7 +78,6 @@ sub _main {
 			$e->{'created_at'},
 			$e->{'user'}->{'screen_name'},
 			$e->{'text'});
-		utf8::encode($line);
 		_println($line);
 	}
 }

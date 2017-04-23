@@ -62,7 +62,7 @@ sub _main {
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
 
-	my $statuses = $t->home_timeline({ count => 100 });
+	my $statuses = $t->home_timeline({ count => 1000 });
 	for my $status ( @$statuses ) {
 		my $line = sprintf(
 			'%s <@%s> %s',
