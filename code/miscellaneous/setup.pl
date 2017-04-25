@@ -622,6 +622,75 @@ sub _setup_bash {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package debian;
+
+sub setup {
+	
+	_setup_bash();
+}
+
+sub _setup_bash {
+
+	if (!prompt::confirm('bash_aliases のセットアップをしますか？')) {
+		out::println('canceled.');
+		return;
+	}
+	directory::cd_home();
+	file_backup::backup('.bashrc');
+	file_backup::backup('.bash_aliases');
+	if (! -f '.bash_aliases') {
+		system('touch', '.bash_aliases');
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 package main;
 
 sub _diagnose_os {
@@ -656,13 +725,24 @@ sub _main {
 	binmode(STDOUT, ':utf8');
 	binmode(STDERR, ':utf8');
 
-	if ('Amazon Linux' eq _diagnose_os()) {
+
+
+
+
+
+	my $os_description = _diagnose_os();
+
+	if ('Amazon Linux' eq $os_description) {
 		out::println('[info] Great! Amazon Linux found!');
 		amazon_linux::setup();
 	}
-	elsif ('Ubuntu' eq _diagnose_os()) {
-		out::println('[info] Great! Ubuntu is the most elegant!');
+	elsif ('Ubuntu' eq $os_description) {
+		out::println('[info] Great! Ubuntu is the smartest way!');
 		ubuntu::setup();
+	}
+	elsif ('Debian' eq $os_description) {
+		out::println('[info] Excellent! Debian is elegant operating system!');
+		debian::setup();
 	}
 	else {
 		out::println('[warn] unknown os. nothing todo...');
