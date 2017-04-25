@@ -661,6 +661,9 @@ sub setup {
 	
 	_setup_bash();
 	_setup_bash_aliases();
+	_setup_git();
+	_setup_vim();
+	_setup_cpanm();
 }
 
 sub _setup_bash {
@@ -675,6 +678,20 @@ sub _setup_bash {
 	if (! -f '.bash_aliases') {
 		system('touch', '.bash_aliases');
 	}
+}
+
+sub _has_git_installed {
+
+	my $stream = undef;
+	if (!open($stream, 'git --version |')) {
+		return 0;
+	}
+	my $line = <$stream>;
+	close($stream);
+	if (-1 == index($line, 'git version')) {
+		return 0;
+	}
+	return 1;
 }
 
 sub _setup_bash_aliases {
@@ -727,6 +744,59 @@ sub _setup_bash_aliases {
 
 	out::println('setting up [~/.bash_aliases] ok.');
 }
+
+sub _setup_git {
+
+	out::println('[git] begin setting.');
+	if (!_has_git_installed()) {
+		system('sudo', 'apt-get', 'install', 'git');
+	}
+	if (!_has_git_installed()) {
+		out::println('[git] ... [CANCELED]');
+	}
+	out::println('[git] ... [OK]');
+}
+
+sub _setup_vim {
+
+	if (!prompt::confirm('Vim のセットアップをしますか？')) {
+		out::println('canceled.');
+		return;
+	}
+	out::println('[Vim] begin setting.');
+	directory::cd_home();
+	system(
+		'wget',
+		'https://raw.githubusercontent.com/mass10/vim.note/master/vimrc/.vimrc',
+		'--output-document',
+		'.vimrc');
+	system(
+		'sudo',
+		'mkdir',
+		'-p',
+		'/usr/share/vim/vimfiles/colors');
+	system(
+		'sudo',
+		'wget',
+		'https://raw.githubusercontent.com/jnurmine/Zenburn/master/colors/zenburn.vim',
+		'--output-document',
+		'/usr/share/vim/vimfiles/colors/zenburn.vim');
+	system(
+		'sudo',
+		'wget',
+		'https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim',
+		'--output-document',
+		'/usr/share/vim/vimfiles/colors/molokai.vim');
+	out::println('[Vim] ok.');
+}
+
+
+
+
+
+
+
+
 
 
 
