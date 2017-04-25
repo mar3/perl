@@ -660,6 +660,7 @@ package debian;
 sub setup {
 	
 	_setup_bash();
+	_setup_bash_aliases();
 }
 
 sub _setup_bash {
@@ -675,6 +676,64 @@ sub _setup_bash {
 		system('touch', '.bash_aliases');
 	}
 }
+
+sub _setup_bash_aliases {
+
+	directory::cd_home();
+	out::println('setting up [~/.bash_aliases]');
+
+	file_backup::backup('.bash_aliases');
+
+	if (! -f '.bash_aliases') {
+		system('touch', '.bash_aliases');
+	}
+
+	my $stream = undef;
+	open($stream, '.bash_aliases');
+	my $target = {};
+	while (my $line = <$stream>) {
+		$line = util::trim($line);
+		if (0 == index($line, '#')) {
+			next;
+		}
+		if (0 <= index($line, 'alias l=')) {
+			$target->{'l'}++;
+		}
+		elsif (0 <= index($line, 'alias n=')) {
+			$target->{'n'}++;
+		}
+		elsif (0 <= index($line, 'alias u=')) {
+			$target->{'u'}++;
+		}
+		elsif (0 <= index($line, 'alias g=')) {
+			$target->{'g'}++;
+		}
+	}
+	close($stream);
+
+	# appending if needed...
+	if (!$target->{l}) {
+		util::append_line('.bash_aliases', 'alias l=\'/bin/ls -lF --full-time\'');
+	}
+	if (!$target->{n}) {
+		util::append_line('.bash_aliases', 'alias n=\'/bin/ls -ltrF --full-time\'');
+	}
+	if (!$target->{u}) {
+		util::append_line('.bash_aliases', 'alias u=\'cd ..\'');
+	}
+	if (!$target->{g}) {
+		util::append_line('.bash_aliases', 'alias g=\'git\'');
+	}
+
+	out::println('setting up [~/.bash_aliases] ok.');
+}
+
+
+
+
+
+
+
 
 
 
