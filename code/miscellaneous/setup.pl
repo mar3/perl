@@ -997,7 +997,7 @@ sub _setup_vim {
 
 sub ubuntu::_setup_cpanm {
 
-	if (!prompt::confirm('cpanm のセットアップをしますか？')) {
+	if (!prompt::confirm('root ユーザーに cpanm のセットアップをしますか？')) {
 		out::println('canceled.');
 		return;
 	}
