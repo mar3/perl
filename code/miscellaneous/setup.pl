@@ -886,11 +886,6 @@ sub setup {
 ###############################################################################
 package ubuntu;
 
-sub setup {
-	
-	_setup_bash();
-}
-
 sub _setup_bash {
 
 	if (!prompt::confirm('bash_aliases のセットアップをしますか？')) {
@@ -904,6 +899,171 @@ sub _setup_bash {
 		system('touch', '.bash_aliases');
 	}
 }
+
+sub _setup_bash_aliases {
+
+	directory::cd_home();
+	out::println('setting up [~/.bash_aliases]');
+	file_backup::backup('.bash_aliases');
+	if (! -f '.bash_aliases') {
+		system('touch', '.bash_aliases');
+	}
+	my $stream = undef;
+	open($stream, '.bash_aliases');
+	my $target = {};
+	while (my $line = <$stream>) {
+		$line = util::trim($line);
+		if (0 == index($line, '#')) {
+			next;
+		}
+		if (0 <= index($line, 'alias l=')) {
+			$target->{'l'}++;
+		}
+		elsif (0 <= index($line, 'alias n=')) {
+			$target->{'n'}++;
+		}
+		elsif (0 <= index($line, 'alias u=')) {
+			$target->{'u'}++;
+		}
+		elsif (0 <= index($line, 'alias g=')) {
+			$target->{'g'}++;
+		}
+	}
+	close($stream);
+	if (!$target->{l}) {
+		util::append_line('.bash_aliases', 'alias l=\'/bin/ls -lF --full-time\'');
+	}
+	if (!$target->{n}) {
+		util::append_line('.bash_aliases', 'alias n=\'/bin/ls -ltrF --full-time\'');
+	}
+	if (!$target->{u}) {
+		util::append_line('.bash_aliases', 'alias u=\'cd ..\'');
+	}
+	if (!$target->{g}) {
+		util::append_line('.bash_aliases', 'alias g=\'git\'');
+	}
+
+	out::println('setting up [~/.bash_aliases] ok.');
+}
+
+sub _has_git_installed {
+
+	my $stream = undef;
+	if (!open($stream, 'git --version |')) {
+		return 0;
+	}
+	my $line = <$stream>;
+	close($stream);
+	if (-1 == index($line, 'git version')) {
+		return 0;
+	}
+	return 1;
+}
+
+sub _setup_git {
+
+	out::println('[git] begin setting.');
+	# if (!_has_git_installed()) {
+		system('sudo', 'apt-get', 'install', 'git');
+	# }
+	if (!_has_git_installed()) {
+		out::println('[git] ... [CANCELED]');
+	}
+	out::println('[git] ... [OK]');
+}
+
+sub _setup_vim {
+
+	if (!prompt::confirm('Vim のセットアップをしますか？')) {
+		out::println('canceled.');
+		return;
+	}
+	out::println('[Vim] begin setting.');
+	directory::cd_home();
+	# [.vimrc]
+	if (-f '.vimrc') {
+		if (prompt::confirm('.vimrc をアップデートしますか？')) {
+			system('wget', 'https://raw.githubusercontent.com/mass10/vim.note/master/vimrc/.vimrc', '--output-document', '.vimrc');
+		}
+	}
+	system('sudo', 'mkdir', '-p', '/usr/share/vim/vimfiles/colors');
+	system('sudo', 'wget', 'https://raw.githubusercontent.com/jnurmine/Zenburn/master/colors/zenburn.vim', '--output-document', '/usr/share/vim/vimfiles/colors/zenburn.vim');
+	system('sudo', 'wget', 'https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim', '--output-document', '/usr/share/vim/vimfiles/colors/molokai.vim');
+	out::println('[Vim] ok.');
+}
+
+sub ubuntu::_setup_cpanm {
+
+	if (!prompt::confirm('cpanm のセットアップをしますか？')) {
+		out::println('canceled.');
+		return;
+	}
+	out::println('[cpanm] begin setting.');
+	system('sudo', 'mkdir', '-p', '/root/bin');
+	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
+	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
+	out::println('[cpanm] ok.');
+}
+
+sub setup {
+	
+	ubuntu::_setup_bash();
+	ubuntu::_setup_bash_aliases();
+	ubuntu::_setup_git();
+	ubuntu::_setup_vim();
+	ubuntu::_setup_cpanm();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
