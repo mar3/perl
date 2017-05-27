@@ -888,10 +888,10 @@ package ubuntu;
 
 sub _setup_bash {
 
-	if (!prompt::confirm('~/.bashrc のセットアップをしますか？')) {
-		out::println('canceled.');
-		return;
-	}
+	# if (!prompt::confirm('~/.bashrc のセットアップをしますか？')) {
+	# 	out::println('canceled.');
+	# 	return;
+	# }
 	directory::cd_home();
 
 	my $stream = undef;
@@ -922,9 +922,9 @@ sub _setup_bash_aliases {
 
 	directory::cd_home();
 	out::println('setting up [~/.bash_aliases]');
-	if (! -f '.bash_aliases') {
-		system('touch', '.bash_aliases');
-	}
+	# if (! -f '.bash_aliases') {
+	# 	system('touch', '.bash_aliases');
+	# }
 	my $stream = undef;
 	open($stream, '.bash_aliases');
 	my $target = undef;
