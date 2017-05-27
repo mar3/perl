@@ -986,6 +986,9 @@ sub _setup_vim {
 			system('wget', 'https://raw.githubusercontent.com/mass10/vim.note/master/vimrc/.vimrc', '--output-document', '.vimrc');
 		}
 	}
+	else {
+		system('wget', 'https://raw.githubusercontent.com/mass10/vim.note/master/vimrc/.vimrc', '--output-document', '.vimrc');
+	}
 	system('sudo', 'mkdir', '-p', '/usr/share/vim/vimfiles/colors');
 	system('sudo', 'wget', 'https://raw.githubusercontent.com/jnurmine/Zenburn/master/colors/zenburn.vim', '--output-document', '/usr/share/vim/vimfiles/colors/zenburn.vim');
 	system('sudo', 'wget', 'https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim', '--output-document', '/usr/share/vim/vimfiles/colors/molokai.vim');
