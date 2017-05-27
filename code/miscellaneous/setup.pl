@@ -904,45 +904,51 @@ sub _setup_bash_aliases {
 
 	directory::cd_home();
 	out::println('setting up [~/.bash_aliases]');
-	file_backup::backup('.bash_aliases');
 	if (! -f '.bash_aliases') {
 		system('touch', '.bash_aliases');
 	}
 	my $stream = undef;
 	open($stream, '.bash_aliases');
-	my $target = {};
+	my $target = undef;
 	while (my $line = <$stream>) {
 		$line = util::trim($line);
 		if (0 == index($line, '#')) {
 			next;
 		}
 		if (0 <= index($line, 'alias l=')) {
-			$target->{'l'}++;
+			$target->{'alias l'}++;
 		}
 		elsif (0 <= index($line, 'alias n=')) {
-			$target->{'n'}++;
+			$target->{'alias n'}++;
 		}
 		elsif (0 <= index($line, 'alias u=')) {
-			$target->{'u'}++;
+			$target->{'alias u'}++;
 		}
 		elsif (0 <= index($line, 'alias g=')) {
-			$target->{'g'}++;
+			$target->{'alias g'}++;
 		}
 	}
 	close($stream);
-	if (!$target->{l}) {
+	if (!defined($target)) {
+		# nothing to do
+		out::println('[~/.bash_aliases] nothing to do...');
+		return;
+	}
+	# write
+	file_backup::backup('.bash_aliases');
+	if (!$target->{'alias l'}) {
 		util::append_line('.bash_aliases', 'alias l=\'/bin/ls -lF --full-time\'');
 	}
-	if (!$target->{n}) {
+	if (!$target->{'alias n'}) {
 		util::append_line('.bash_aliases', 'alias n=\'/bin/ls -ltrF --full-time\'');
 	}
-	if (!$target->{u}) {
+	if (!$target->{'alias u'}) {
 		util::append_line('.bash_aliases', 'alias u=\'cd ..\'');
 	}
-	if (!$target->{g}) {
+	if (!$target->{'alias g'}) {
 		util::append_line('.bash_aliases', 'alias g=\'git\'');
 	}
-
+	# done
 	out::println('setting up [~/.bash_aliases] ok.');
 }
 
