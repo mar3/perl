@@ -888,16 +888,34 @@ package ubuntu;
 
 sub _setup_bash {
 
-	if (!prompt::confirm('bash_aliases のセットアップをしますか？')) {
+	if (!prompt::confirm('~/.bashrc のセットアップをしますか？')) {
 		out::println('canceled.');
 		return;
 	}
 	directory::cd_home();
-	file_backup::backup('.bashrc');
-	file_backup::backup('.bash_aliases');
-	if (! -f '.bash_aliases') {
-		system('touch', '.bash_aliases');
+
+	my $stream = undef;
+	open($stream, '.bashrc');
+	my $status = '';
+	while (my $line = <$stream>) {
+		$line = util::trim($line);
+		if (0 == index($line, '#')) {
+			next;
+		}
+		if (0 <= index($line, 'source ~/.bash_aliases')) {
+			$status = 'found';
+		}
+		elsif (0 <= index($line, '. ~/.bash_aliases')) {
+			$status = 'found';
+		}
 	}
+	close($stream);
+	if ($status eq 'found') {
+		out::println('[~/.bashrc] nothing to do...');
+		return;
+	}
+	file_backup::backup('.bashrc');
+	util::append_line('.bashrc', '. ~/.bash_aliases');
 }
 
 sub _setup_bash_aliases {
@@ -1171,7 +1189,7 @@ sub _setup_bash {
 	}
 	directory::cd_home();
 	file_backup::backup('.bashrc');
-	file_backup::backup('.bash_aliases');
+	# file_backup::backup('.bash_aliases');
 	if (! -f '.bash_aliases') {
 		system('touch', '.bash_aliases');
 	}
