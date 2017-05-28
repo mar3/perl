@@ -956,7 +956,10 @@ sub new {
 
 sub append_line {
 	my ($this, @values) = @_;
-	if (!length($this->{'backed up'})) {
+	if ('done' eq $this->{'backed up'}) {
+		# nothing to do.
+	}
+	else {
 		file_backup::backup($this->{path});
 		$this->{'backed up'} = 'done';
 	}
