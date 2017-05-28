@@ -1030,8 +1030,8 @@ sub _setup_bash {
 		out::println();
 		return;
 	}
-	file_backup::backup('.bashrc');
-	util::append_line('.bashrc', '. ~/.bash_aliases');
+	my $file = new file_transaction('.bashrc');
+	$file->append_line('.bashrc', '. ~/.bash_aliases');
 	out::println('[~/.bashrc] ok.');
 	out::println();
 }
