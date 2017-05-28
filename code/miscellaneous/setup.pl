@@ -955,12 +955,12 @@ sub new {
 }
 
 sub append_line {
-	my ($this, @_) = @_;
+	my ($this, @values) = @_;
 	if (!length($this->{'backed up'})) {
 		file_backup::backup($this->{path});
 		$this->{'backed up'} = 'done';
 	}
-	util::append_line($this->{path}, @_);
+	util::append_line($this->{path}, @values);
 }
 
 
