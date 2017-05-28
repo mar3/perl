@@ -522,7 +522,7 @@ sub confirm {
 
 	print(@_, "\n");
 	print('(y/N)?> ');
-	my $input = readline();
+	my $input = <STDIN>;
 	$input = util::rtrim($input);
 	$input = uc($input);
 	if ($input eq 'YES') {
@@ -678,6 +678,7 @@ sub _setup_bash {
 
 	if (!prompt::confirm('bash_aliases のセットアップをしますか？')) {
 		out::println('canceled.');
+		out::println();
 		return;
 	}
 
@@ -721,6 +722,7 @@ sub _setup_vim {
 
 	if (!prompt::confirm('Vim のセットアップをしますか？')) {
 		out::println('canceled.');
+		out::println();
 		return;
 	}
 	out::println('[Vim] begin setting.');
@@ -764,6 +766,7 @@ sub _setup_cpanm {
 
 	if (!prompt::confirm('cpanm のセットアップをしますか？')) {
 		out::println('canceled.');
+		out::println();
 		return;
 	}
 	out::println('[cpanm] begin setting.');
@@ -998,6 +1001,7 @@ package ubuntu;
 
 sub _setup_bash {
 
+	out::println('## [~.bashrc]');
 	directory::cd_home();
 	my $stream = undef;
 	open($stream, '.bashrc');
@@ -1023,15 +1027,18 @@ sub _setup_bash {
 	close($stream);
 	if ($status eq 'found') {
 		out::println('[~/.bashrc] nothing to do...');
+		out::println();
 		return;
 	}
 	file_backup::backup('.bashrc');
 	util::append_line('.bashrc', '. ~/.bash_aliases');
 	out::println('[~/.bashrc] ok.');
+	out::println();
 }
 
 sub _setup_bash_aliases {
 
+	out::println('## [~.bash_aliases]');
 	directory::cd_home();
 	my $stream = undef;
 	open($stream, '.bash_aliases');
@@ -1064,6 +1071,7 @@ sub _setup_bash_aliases {
 	close($stream);
 	if ($target->is_empty()) {
 		out::println('[~/.bash_aliases] nothing to do...');
+		out::println();
 		return;
 	}
 	my $file = new file_transaction('.bash_aliases');
@@ -1084,6 +1092,7 @@ sub _setup_bash_aliases {
 	}
 	# done
 	out::println('[~/.bash_aliases] ok.');
+	out::println();
 }
 
 sub _has_git_installed {
@@ -1102,23 +1111,26 @@ sub _has_git_installed {
 
 sub _setup_git {
 
-	out::println('[git] begin setting.');
+	out::println('## [Git]');
 	# if (!_has_git_installed()) {
 		system('sudo', 'apt-get', 'install', 'git');
 	# }
 	if (!_has_git_installed()) {
-		out::println('[git] ... [CANCELED]');
+		out::println('[Git] ... [canceled]');
+		return;
 	}
-	out::println('[git] ... [OK]');
+	out::println('Ok.');
+	out::println();
 }
 
 sub _setup_vim {
 
+	out::println('## [Vim]');
 	if (!prompt::confirm('Vim のセットアップをしますか？')) {
 		out::println('canceled.');
+		out::println();
 		return;
 	}
-	out::println('[Vim] begin setting.');
 	directory::cd_home();
 	# [.vimrc]
 	if (-f '.vimrc') {
@@ -1132,20 +1144,24 @@ sub _setup_vim {
 	system('sudo', 'mkdir', '-p', '/usr/share/vim/vimfiles/colors');
 	system('sudo', 'wget', 'https://raw.githubusercontent.com/jnurmine/Zenburn/master/colors/zenburn.vim', '--output-document', '/usr/share/vim/vimfiles/colors/zenburn.vim');
 	system('sudo', 'wget', 'https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim', '--output-document', '/usr/share/vim/vimfiles/colors/molokai.vim');
-	out::println('[Vim] ok.');
+	out::println('Ok.');
+	out::println();
 }
 
-sub ubuntu::_setup_cpanm {
+sub _setup_cpanm {
 
+	out::println('## [cpanm for root]');
 	if (!prompt::confirm('root ユーザーに cpanm のセットアップをしますか？')) {
 		out::println('canceled.');
+		out::println();
 		return;
 	}
-	out::println('[cpanm] begin setting.');
+	# out::println('[cpanm].');
 	system('sudo', 'mkdir', '-p', '/root/bin');
 	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
 	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
 	out::println('[cpanm] ok.');
+	out::println('');
 }
 
 sub setup {
@@ -1571,23 +1587,27 @@ sub _main {
 
 
 
-
+	out::println('## HELLO');
 	my $os_description = _diagnose_os();
 
 	if ('Amazon Linux' eq $os_description) {
 		out::println('[info] Great! Amazon Linux found!');
+		out::println();
 		amazon_linux::setup();
 	}
 	elsif ('Ubuntu' eq $os_description) {
 		out::println('[info] Great! Ubuntu is the smartest way!');
+		out::println();
 		ubuntu::setup();
 	}
 	elsif ('Debian' eq $os_description) {
 		out::println('[info] Excellent! Debian is elegant operating system!');
+		out::println();
 		debian::setup();
 	}
 	else {
 		out::println('[warn] unknown os. nothing todo...');
+		out::println();
 	}
 }
 
