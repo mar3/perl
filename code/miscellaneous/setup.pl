@@ -48,7 +48,6 @@ use Cwd;
 
 
 
-
 ###############################################################################
 ###############################################################################
 ###############################################################################
@@ -884,16 +883,119 @@ sub setup {
 ###############################################################################
 ###############################################################################
 ###############################################################################
+package hashmap;
+
+sub new {
+	my ($name) = @_;
+	my $this = {};
+	$this = bless($this, $name);
+	return $this;
+}
+
+sub is_empty {
+
+	my ($this) = @_;
+	my @keys = keys(%$this);
+	return scalar(@keys) == 0;
+}
+
+sub keys {
+
+	my ($this) = @_;
+	return keys(%$this);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+package file_transaction;
+
+sub new {
+	my ($name, $path) = @_;
+	my $this = {};
+	if (!length($path)) {
+		die('no path given.');
+	}
+	$this = bless($this, $name);
+	$this->{path} = $path;
+	return $this;
+}
+
+sub append_line {
+	my ($this, @_) = @_;
+	if (!length($this->{'backed up'})) {
+		file_backup::backup($this->{path});
+		$this->{'backed up'} = 'done';
+	}
+	util::append_line($this->{path}, @_);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
 package ubuntu;
 
 sub _setup_bash {
 
-	# if (!prompt::confirm('~/.bashrc のセットアップをしますか？')) {
-	# 	out::println('canceled.');
-	# 	return;
-	# }
 	directory::cd_home();
-
 	my $stream = undef;
 	open($stream, '.bashrc');
 	my $status = '';
@@ -908,6 +1010,12 @@ sub _setup_bash {
 		elsif (0 <= index($line, '. ~/.bash_aliases')) {
 			$status = 'found';
 		}
+		elsif (0 <= index($line, 'source .bash_aliases')) {
+			$status = 'found';
+		}
+		elsif (0 <= index($line, '. .bash_aliases')) {
+			$status = 'found';
+		}
 	}
 	close($stream);
 	if ($status eq 'found') {
@@ -916,58 +1024,63 @@ sub _setup_bash {
 	}
 	file_backup::backup('.bashrc');
 	util::append_line('.bashrc', '. ~/.bash_aliases');
+	out::println('[~/.bashrc] ok.');
 }
 
 sub _setup_bash_aliases {
 
 	directory::cd_home();
-	out::println('setting up [~/.bash_aliases]');
-	# if (! -f '.bash_aliases') {
-	# 	system('touch', '.bash_aliases');
-	# }
 	my $stream = undef;
 	open($stream, '.bash_aliases');
-	my $target = undef;
+	my $target = new hashmap();
+	$target->{'alias l'}++;
+	$target->{'alias n'}++;
+	$target->{'alias u'}++;
+	$target->{'alias g'}++;
+	$target->{'alias rm'}++;
 	while (my $line = <$stream>) {
-		$line = util::trim($line);
 		if (0 == index($line, '#')) {
 			next;
 		}
 		if (0 <= index($line, 'alias l=')) {
-			$target->{'alias l'}++;
+			delete($target->{'alias l'});
 		}
 		elsif (0 <= index($line, 'alias n=')) {
-			$target->{'alias n'}++;
+			delete($target->{'alias n'});
 		}
 		elsif (0 <= index($line, 'alias u=')) {
-			$target->{'alias u'}++;
+			delete($target->{'alias u'});
 		}
 		elsif (0 <= index($line, 'alias g=')) {
-			$target->{'alias g'}++;
+			delete($target->{'alias g'});
+		}
+		elsif (0 <= index($line, 'alias rm=')) {
+			delete($target->{'alias rm'});
 		}
 	}
 	close($stream);
-	if (!defined($target)) {
-		# nothing to do
+	if ($target->is_empty()) {
 		out::println('[~/.bash_aliases] nothing to do...');
 		return;
 	}
-	# write
-	file_backup::backup('.bash_aliases');
+	my $file = new file_transaction('.bash_aliases');
 	if (!$target->{'alias l'}) {
-		util::append_line('.bash_aliases', 'alias l=\'/bin/ls -lF --full-time\'');
+		$file->append_line('.bash_aliases', 'alias l=\'/bin/ls -lF --full-time\'');
 	}
 	if (!$target->{'alias n'}) {
-		util::append_line('.bash_aliases', 'alias n=\'/bin/ls -ltrF --full-time\'');
+		$file->append_line('.bash_aliases', 'alias n=\'/bin/ls -ltrF --full-time\'');
 	}
 	if (!$target->{'alias u'}) {
-		util::append_line('.bash_aliases', 'alias u=\'cd ..\'');
+		$file->append_line('.bash_aliases', 'alias u=\'cd ..\'');
 	}
 	if (!$target->{'alias g'}) {
-		util::append_line('.bash_aliases', 'alias g=\'git\'');
+		$file->append_line('.bash_aliases', 'alias g=\'git\'');
+	}
+	if (!$target->{'alias rm'}) {
+		$file->append_line('.bash_aliases', 'alias rm=\'/bin/rm -i\'');
 	}
 	# done
-	out::println('setting up [~/.bash_aliases] ok.');
+	out::println('[~/.bash_aliases] ok.');
 }
 
 sub _has_git_installed {
