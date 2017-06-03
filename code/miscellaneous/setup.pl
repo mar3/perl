@@ -417,7 +417,9 @@ sub append_line {
 
 	my ($path, @items) = @_;
 	my $stream = undef;
-	open($stream, '>>', $path);
+	if (!open($stream, '>>', $path)) {
+		out::println('[ERROR] ', $!);
+	}
 	print($stream @items, "\n");
 	close($stream);
 }
@@ -947,6 +949,7 @@ sub keys {
 package file_transaction;
 
 sub new {
+
 	my ($name, $path) = @_;
 	my $this = {};
 	if (!length($path)) {
@@ -958,6 +961,7 @@ sub new {
 }
 
 sub append_line {
+
 	my ($this, @values) = @_;
 	if ('done' eq $this->{'backed up'}) {
 		# nothing to do.
@@ -1031,7 +1035,7 @@ sub _setup_bash {
 		return;
 	}
 	my $file = new file_transaction('.bashrc');
-	$file->append_line('.bashrc', '. ~/.bash_aliases');
+	$file->append_line('. ~/.bash_aliases');
 	out::println('[~/.bashrc] ok.');
 	out::println();
 }
@@ -1041,13 +1045,15 @@ sub _setup_bash_aliases {
 	out::println('## [~.bash_aliases]');
 	directory::cd_home();
 	my $stream = undef;
-	open($stream, '.bash_aliases');
 	my $target = new hashmap();
 	$target->{'alias l'}++;
 	$target->{'alias n'}++;
 	$target->{'alias u'}++;
 	$target->{'alias g'}++;
 	$target->{'alias rm'}++;
+	if (!open($stream, '.bash_aliases')) {
+		out::println('[info] ~/.bash_aliases はまだありません');
+	}
 	while (my $line = <$stream>) {
 		if (0 == index($line, '#')) {
 			next;
@@ -1075,20 +1081,25 @@ sub _setup_bash_aliases {
 		return;
 	}
 	my $file = new file_transaction('.bash_aliases');
-	if (!$target->{'alias l'}) {
-		$file->append_line('.bash_aliases', 'alias l=\'/bin/ls -lF --full-time\'');
+	if ($target->{'alias l'}) {
+		out::println('[trace] appending alias...');
+		$file->append_line('alias l=\'/bin/ls -lF --full-time\'');
 	}
-	if (!$target->{'alias n'}) {
-		$file->append_line('.bash_aliases', 'alias n=\'/bin/ls -ltrF --full-time\'');
+	if ($target->{'alias n'}) {
+		out::println('[trace] appending alias...');
+		$file->append_line('alias n=\'/bin/ls -ltrF --full-time\'');
 	}
-	if (!$target->{'alias u'}) {
-		$file->append_line('.bash_aliases', 'alias u=\'cd ..\'');
+	if ($target->{'alias u'}) {
+		out::println('[trace] appending alias...');
+		$file->append_line('alias u=\'cd ..\'');
 	}
-	if (!$target->{'alias g'}) {
-		$file->append_line('.bash_aliases', 'alias g=\'git\'');
+	if ($target->{'alias g'}) {
+		out::println('[trace] appending alias...');
+		$file->append_line('alias g=\'git\'');
 	}
-	if (!$target->{'alias rm'}) {
-		$file->append_line('.bash_aliases', 'alias rm=\'/bin/rm -i\'');
+	if ($target->{'alias rm'}) {
+		out::println('[trace] appending alias...');
+		$file->append_line('alias rm=\'/bin/rm -i\'');
 	}
 	# done
 	out::println('[~/.bash_aliases] ok.');
