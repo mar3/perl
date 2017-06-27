@@ -3,10 +3,15 @@
 #
 # UUID を生成するサンプルです。
 #
+use utf8;
 use strict;
 use Data::UUID;
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	my $generator = Data::UUID->new;
 	print($generator->create_str(), "\n");
@@ -16,3 +21,4 @@ sub _main {
 }
 
 _main();
+
