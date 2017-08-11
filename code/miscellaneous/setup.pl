@@ -1718,6 +1718,12 @@ sub _has_git_installed {
 
 sub _setup_git {
 
+	if (!prompt::confirm('Git をインストールしますか？')) {
+		out::println('canceled.');
+		out::println();
+		return;
+	}
+
 	out::println('[git] begin setting.');
 	if (!_has_git_installed()) {
 		system('sudo', 'yum', 'install', 'git');
