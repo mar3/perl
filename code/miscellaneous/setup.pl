@@ -1542,6 +1542,268 @@ sub _setup_cpanm {
 
 
 
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+package centos;
+
+sub _setup_bash_aliases {
+
+	directory::cd_home();
+	out::println('setting up [~/.bash_aliases]');
+
+	file_backup::backup('.bash_aliases');
+
+	if (! -f '.bash_aliases') {
+		system('touch', '.bash_aliases');
+	}
+
+	my $stream = undef;
+	open($stream, '.bash_aliases');
+	my $target = {};
+	while (my $line = <$stream>) {
+		$line = util::trim($line);
+		if (0 == index($line, '#')) {
+			next;
+		}
+		if (0 <= index($line, 'alias l=')) {
+			$target->{'l'}++;
+		}
+		elsif (0 <= index($line, 'alias n=')) {
+			$target->{'n'}++;
+		}
+		elsif (0 <= index($line, 'alias u=')) {
+			$target->{'u'}++;
+		}
+		elsif (0 <= index($line, 'alias g=')) {
+			$target->{'g'}++;
+		}
+	}
+	close($stream);
+
+	# appending if needed...
+	if (!$target->{l}) {
+		util::append_line('.bash_aliases', 'alias l=\'/bin/ls -lF --full-time\'');
+	}
+	if (!$target->{n}) {
+		util::append_line('.bash_aliases', 'alias n=\'/bin/ls -ltrF --full-time\'');
+	}
+	if (!$target->{u}) {
+		util::append_line('.bash_aliases', 'alias u=\'cd ..\'');
+	}
+	if (!$target->{g}) {
+		util::append_line('.bash_aliases', 'alias g=\'git\'');
+	}
+
+	out::println('setting up [~/.bash_aliases] ok.');
+}
+
+sub _setup_bash {
+
+	if (!prompt::confirm('bash_aliases のセットアップをしますか？')) {
+		out::println('canceled.');
+		out::println();
+		return;
+	}
+
+	directory::cd_home();
+
+	file_backup::backup('.bashrc');
+
+	my $stream = undef;
+	open($stream, '.bashrc');
+	my $target = {};
+	while (my $line = <$stream>) {
+		$line = util::trim($line);
+		if (0 == index($line, '#')) {
+			next;
+		}
+		if ((0 <= index($line, '-f')) && (0 <= index($line, '.bash_aliases'))) {
+			$target->{read_bash_profile}++;
+		}
+		elsif ((0 <= index($line, 'export')) && (0 <= index($line, 'EDITOR'))) {
+			$target->{editor_setting}++;
+		}
+	}
+	close($stream);
+
+	if (!$target->{read_bash_profile}) {
+		util::append_line('.bashrc', "\n");
+		util::append_line('.bashrc', 'if [ -f ~/.bash_aliases ]; then');
+		util::append_line('.bashrc', '	. ~/.bash_aliases');
+		util::append_line('.bashrc', 'fi');
+		util::append_line('.bashrc', "\n");
+	}
+
+	if (!$target->{editor_setting}) {
+		util::append_line('.bashrc', "\n");
+		util::append_line('.bashrc', 'export EDITOR=vim');
+		util::append_line('.bashrc', "\n");
+	}
+}
+
+sub _setup_vim {
+
+	if (!prompt::confirm('Vim のセットアップをしますか？')) {
+		out::println('canceled.');
+		out::println();
+		return;
+	}
+	out::println('[Vim] begin setting.');
+	directory::cd_home();
+	system(
+		'wget',
+		'https://raw.githubusercontent.com/mass10/vim.note/master/vimrc/.vimrc',
+		'--output-document',
+		'.vimrc');
+	system(
+		'sudo',
+		'mkdir',
+		'-p',
+		'/usr/share/vim/vimfiles/colors');
+	system(
+		'sudo',
+		'wget',
+		'https://raw.githubusercontent.com/jnurmine/Zenburn/master/colors/zenburn.vim',
+		'--output-document',
+		'/usr/share/vim/vimfiles/colors/zenburn.vim');
+	system(
+		'sudo',
+		'wget',
+		'https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim',
+		'--output-document',
+		'/usr/share/vim/vimfiles/colors/molokai.vim');
+	out::println('[Vim] ok.');
+}
+
+sub _sudo_test_directory {
+
+	my ($path) = @_;
+	my $test = `sudo file /root/bin`;
+	if (0 <= index($test, 'directory')) {
+		return 1;
+	}
+	return 0;
+}
+
+sub _setup_cpanm {
+
+	if (!prompt::confirm('/root/bin/ に cpanm のセットアップをしますか？')) {
+		out::println('canceled.');
+		out::println();
+		return;
+	}
+	out::println('[cpanm] begin setting.');
+	system('sudo', 'mkdir', '-p', '/root/bin');
+	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
+	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
+	out::println('[cpanm] ok.');
+}
+
+sub _has_git_installed {
+
+	return 0;
+	my $stream = undef;
+	open($stream, 'git --version |');
+	my $line = <$stream>;
+	close($stream);
+	if (-1 == index($line, 'git version')) {
+		return 0;
+	}
+	return 1;
+}
+
+sub _setup_git {
+
+	out::println('[git] begin setting.');
+	if (!_has_git_installed()) {
+		system('sudo', 'yum', 'install', 'git');
+	}
+	out::println('[git] ok.');
+}
+
+sub setup {
+
+	_setup_bash();
+	_setup_bash_aliases();
+	_setup_git();
+	_setup_vim();
+	_setup_cpanm();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1564,8 +1826,11 @@ package main;
 
 sub _diagnose_os {
 
-	my $stream;
-	open($stream, '/etc/os-release');
+	my $stream = undef;
+	if (!open($stream, '/etc/os-release')) {
+		if (!open($stream, '/etc/redhat-release')) {
+		}
+	}
 	my $name = '';
 	while (my $line = <$stream>) {
 		if (0 <= index($line, 'Amazon Linux')) {
@@ -1615,6 +1880,11 @@ sub _main {
 		out::println('[info] Excellent! Debian is elegant operating system!');
 		out::println();
 		debian::setup();
+	}
+	elsif ('CentOS' eq $os_description) {
+		out::println('[info] Good! I love CentOS!');
+		out::println();
+		centos::setup();
 	}
 	else {
 		out::println('[warn] unknown os. nothing todo...');
