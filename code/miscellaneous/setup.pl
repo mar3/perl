@@ -627,8 +627,9 @@ package amazon_linux;
 
 sub _setup_bash_aliases {
 
-	directory::cd_home();
 	out::println('setting up [~/.bash_aliases]');
+
+	directory::cd_home();
 
 	file_backup::backup('.bash_aliases');
 
@@ -696,7 +697,7 @@ sub _setup_bash {
 		if (0 == index($line, '#')) {
 			next;
 		}
-		if ((0 <= index($line, '-f')) && (0 <= index($line, '.bash_aliases'))) {
+		if (0 <= index($line, '.bash_aliases')) {
 			$target->{read_bash_profile}++;
 		}
 		elsif ((0 <= index($line, 'export')) && (0 <= index($line, 'EDITOR'))) {
@@ -1167,7 +1168,6 @@ sub _setup_cpanm {
 		out::println();
 		return;
 	}
-	# out::println('[cpanm].');
 	system('sudo', 'mkdir', '-p', '/root/bin');
 	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
 	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
@@ -1177,11 +1177,11 @@ sub _setup_cpanm {
 
 sub setup {
 	
-	ubuntu::_setup_bash();
-	ubuntu::_setup_bash_aliases();
-	ubuntu::_setup_git();
-	ubuntu::_setup_vim();
-	ubuntu::_setup_cpanm();
+	_setup_bash();
+	_setup_bash_aliases();
+	_setup_git();
+	_setup_vim();
+	_setup_cpanm();
 }
 
 
@@ -1314,15 +1314,6 @@ sub setup {
 ###############################################################################
 ###############################################################################
 package debian;
-
-sub setup {
-	
-	_setup_bash();
-	_setup_bash_aliases();
-	_setup_git();
-	_setup_vim();
-	_setup_cpanm();
-}
 
 sub _setup_bash {
 
@@ -1459,8 +1450,17 @@ sub _setup_cpanm {
 	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
 	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
 	out::println('[cpanm] ok.');
+	out::println('');
 }
 
+sub setup {
+	
+	_setup_bash();
+	_setup_bash_aliases();
+	_setup_git();
+	_setup_vim();
+	_setup_cpanm();
+}
 
 
 
@@ -1550,6 +1550,17 @@ sub _setup_cpanm {
 ###############################################################################
 package centos;
 
+sub _setup_wget {
+
+	$version = `wget --version`;
+	out::println('[wget] begin.');
+	out::println('wget --version >> [', $version, ']');
+	chomp($version);
+	if ($version =~ m/wget/msi) {
+		return;
+	}
+}
+
 sub _setup_bash_aliases {
 
 	directory::cd_home();
@@ -1621,7 +1632,7 @@ sub _setup_bash {
 		if (0 == index($line, '#')) {
 			next;
 		}
-		if ((0 <= index($line, '-f')) && (0 <= index($line, '.bash_aliases'))) {
+		if (0 <= index($line, '.bash_aliases')) {
 			$target->{read_bash_profile}++;
 		}
 		elsif ((0 <= index($line, 'export')) && (0 <= index($line, 'EDITOR'))) {
@@ -1705,7 +1716,6 @@ sub _setup_cpanm {
 
 sub _has_git_installed {
 
-	return 0;
 	my $stream = undef;
 	open($stream, 'git --version |');
 	my $line = <$stream>;
@@ -1737,6 +1747,7 @@ sub _setup_git {
 
 sub setup {
 
+	_setup_wget();
 	_setup_bash();
 	_setup_bash_aliases();
 	_setup_git();
