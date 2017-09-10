@@ -1552,7 +1552,7 @@ package centos;
 
 sub _setup_wget {
 
-	$version = `wget --version`;
+	my $version = `wget --version`;
 	out::println('[wget] begin.');
 	out::println('wget --version >> [', $version, ']');
 	chomp($version);
