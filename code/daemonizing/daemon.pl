@@ -11,6 +11,7 @@
 #
 
 use strict;
+use utf8;
 use Data::Dumper;
 use Proc::Daemon;
 use File::Spec::Functions;
