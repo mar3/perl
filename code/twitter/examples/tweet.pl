@@ -1,22 +1,12 @@
 #!/usr/bin/env perl
 # coding: utf-8
-#
-# Twitter のテスト
-#
 
-use strict;
 use utf8;
+use strict;
 use Encode;
 use Net::Twitter;
-use Data::Dumper;
 use File::Spec::Functions;
 use YAML;
-
-
-local $Data::Dumper::Indent = 1;
-local $Data::Dumper::Sortkeys = 1;
-local $Data::Dumper::Terse = 1;
-
 
 
 
@@ -36,7 +26,6 @@ sub _configure {
 		return undef;
 	}
 	my $settings = YAML::LoadFile($path);
-	# print Dumper($settings);
 	return $settings;
 }
 
@@ -66,8 +55,10 @@ sub _main {
 		return;
 	}
 
-	# 不要
-	# utf8::decode($text);
+	if($text =~ m/\A[\r\n\t\ ]*\z/ms) {
+		_println('[info] キャンセル');
+		return;
+	}
 
 	my $t = Net::Twitter->new(
 		traits => ['API::RESTv1_1'],
@@ -80,4 +71,3 @@ sub _main {
 }
 
 main::_main(@ARGV);
-
