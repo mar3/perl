@@ -1,18 +1,12 @@
 #!/usr/bin/env perl
 # coding: utf-8
 
+use utf8;
 use strict;
 use Encode;
 use Net::Twitter;
-use Data::Dumper;
 use File::Spec::Functions;
 use YAML;
-
-
-local $Data::Dumper::Indent = 1;
-local $Data::Dumper::Sortkeys = 1;
-local $Data::Dumper::Terse = 1;
-
 
 
 
@@ -31,20 +25,23 @@ sub _configure {
 		die('[warn] cannot open [', $path, ']');
 	}
 	my $settings = YAML::LoadFile($path);
-	# print Dumper($settings);
 	return $settings;
 }
 
 sub _main {
+
+	binmode(STDIN, 'utf8');
+	binmode(STDOUT, 'utf8');
+	binmode(STDERR, 'utf8');
+
+
 
 	my $settings = _configure();
 	if(!defined($settings)) {
 		return;
 	}
 
-	my $text = 'てすてすてす #test';
-
-	utf8::decode($text);
+	my $text = 'こんにちは #test';
 
 	my $t = Net::Twitter->new(
 		traits => ['API::RESTv1_1'],
@@ -52,10 +49,8 @@ sub _main {
 		consumer_secret => $settings->{'consumer_secret'},
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
-
 	my $result = $t->update($text);
-
-	print(Dumper($result));
+	print(YAML::Dump($result));
 }
 
 main::_main(@ARGV);
