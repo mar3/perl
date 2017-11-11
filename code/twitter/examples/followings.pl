@@ -5,6 +5,7 @@
 #
 
 use strict;
+use utf8;
 use Encode;
 use Net::Twitter;
 use Data::Dumper;
@@ -35,54 +36,32 @@ sub _configure {
 		_println('[warn] cannot open [', $path, ']');
 		return undef;
 	}
+	binmode($stream, ':utf8');
 	my $settings = YAML::LoadFile($path);
 	# print Dumper($settings);
 	return $settings;
-}
-
-sub _normalize {
-
-	my $s = shift;
-
-
-
-	if(utf8::is_utf8($s)) {
-		utf8::encode($s);
-	}
-
-	return $s;
 }
 
 sub _show_node {
 
 	my ($e, $option_type) = @_;
 
-
-
 	if($option_type eq '--full') {
-
-		$e = _normalize($e);
 		$e = YAML::Dump($e);
-		$e = _normalize($e);
-
 		_println($e);
 		_println();
 	}
 
 	if($option_type eq '--simple') {
-
 		_println(
-			'screen_name: ', _normalize($e->{'screen_name'}),
-			', name: ', _normalize($e->{'name'}),
-			', location: ', _normalize($e->{'location'}),
-			', description: ', _normalize($e->{'description'}));
+			'screen_name: ', $e->{'screen_name'},
+			', name: ', $e->{'name'},
+			', location: ', $e->{'location'},
+			', description: ', $e->{'description'});
 	}
 
 	if($option_type eq '--tiny') {
-
-		_println(
-			'', _normalize($e->{'screen_name'}),
-			', ', _normalize($e->{'name'}));
+		_println('', $e->{'screen_name'}, ', ', $e->{'name'});
 	}
 
 	# _println($e);
@@ -94,7 +73,6 @@ sub _open_twitter {
 	if(!defined($settings)) {
 		die('ERROR: CONFIGURATION FAILURE!');
 	}
-
 	return Net::Twitter->new(
 		traits => ['API::RESTv1_1'],
 		consumer_key => $settings->{'consumer_key'},
@@ -111,6 +89,7 @@ sub _print {
 	if(length($next_cursor)) {
 		$params->{cursor} = $next_cursor;
 	}
+	$params->{count} = 200;
 	my $resultset = $t->friends($params);
 	if(!defined($resultset)) {
 		return 0;
@@ -121,9 +100,7 @@ sub _print {
 		_show_node($e, $option_type);
 		$count++;
 	}
-
 	_println('next_cursor is [', $resultset->{'next_cursor'}, ']');
-
 	if(!length($resultset->{'next_cursor'})) {
 		return $count;
 	}
@@ -152,6 +129,10 @@ sub _usage {
 }
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	my $option_help = 0;
 	my $option_full = 0;
