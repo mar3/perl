@@ -72,6 +72,12 @@ sub _main {
 	});
 	$r = $r->{'statuses'};
 	foreach my $e (@$r) {
+		if ($e->{'text'} =~ m/\ART\ /ms) {
+			next;
+		}
+		if ($e->{'text'} =~ m/\ART\:/ms) {
+			next;
+		}
 		# print YAML::Dump($e); next;
 		my $line = sprintf(
 			'%s <%s>: %s',
