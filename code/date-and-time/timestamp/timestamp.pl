@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # coding: utf-8
 
+use utf8;
 use strict;
 use Time::HiRes;
 
@@ -28,6 +29,10 @@ sub _get_timestamp2 {
 }
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	printf("- 日付:\n> [%s]\n", _get_date());
 	printf("- 普通のタイムスタンプ:\n> [%s]\n", _get_timestamp());
