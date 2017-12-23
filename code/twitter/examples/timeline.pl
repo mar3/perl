@@ -4,6 +4,7 @@
 # Net::Twitter を用いた簡単なサンプル
 #
 
+use utf8;
 use strict;
 use Encode;
 use Net::Twitter;
@@ -34,21 +35,16 @@ sub _configure {
 		_println('[warn] cannot open [', $path, ']');
 		return undef;
 	}
+	binmode($stream, ':utf8');
 	my $settings = YAML::LoadFile($path);
-	# print Dumper($settings);
 	return $settings;
 }
 
-sub _normalize {
-
-	my $s = shift;
-	if(utf8::is_utf8($s)) {
-		utf8::encode($s);
-	}
-	return $s;
-}
-
 sub _main {
+
+	binmode(STDIN, 'utf8');
+	binmode(STDOUT, 'utf8');
+	binmode(STDERR, 'utf8');
 
 	my $settings = _configure();
 	if(!defined($settings)) {
@@ -69,7 +65,6 @@ sub _main {
 			$status->{created_at},
 			$status->{user}->{screen_name},
 			$status->{text});
-		$line = _normalize($line);
 		_println($line);
 	}
 }
