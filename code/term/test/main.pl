@@ -6,6 +6,7 @@
 #
 
 use strict;
+use utf8;
 use Term::Screen;
 use Time::HiRes;
 
@@ -16,6 +17,10 @@ sub _println {
 }
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	my $scr = new Term::Screen;
 	my $input = '';
