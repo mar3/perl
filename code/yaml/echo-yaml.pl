@@ -19,6 +19,11 @@ sub _main {
 	binmode(STDOUT, ':utf8');
 	binmode(STDERR, ':utf8');
 
+	if (!length($path)) {
+		_println('path ?');
+		return;
+	}
+
 	my $dataset = YAML::LoadFile($path);
 
 	_println(YAML::Dump($dataset));
