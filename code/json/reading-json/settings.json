@@ -1,0 +1,24 @@
+{
+	"name": "開発環境",
+	"nodes": [
+		{
+			"hostname": "node-1",
+			"environment": {
+				"attribute-01": "value 01",
+				"attribute-02": 999.999
+			}
+		},
+		{
+			"hostname": "node-2",
+			"environment": {
+				"envname": "あいうえお"
+			}
+		},
+		{
+			"hostname": "node-3",
+			"envieonment": {
+			}
+		}
+	]
+}
+
