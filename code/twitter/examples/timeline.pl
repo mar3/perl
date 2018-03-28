@@ -40,6 +40,14 @@ sub _configure {
 	return $settings;
 }
 
+sub _source {
+
+	my ($s) = @_;
+	if ($s =~ m/\<a\ [^>]+\>([^<]+)\<\/a\>/ms) {
+		return $1;
+	}
+}
+
 sub _main {
 
 	binmode(STDIN, 'utf8');
@@ -58,16 +66,14 @@ sub _main {
 		access_token => $settings->{'token'},
 		access_token_secret => $settings->{'token_secret'});
 
-	my $statuses = $t->home_timeline({ count => 1000 });
-	for my $status ( @$statuses ) {
-		my $line = sprintf(
-			'%s <@%s> %s',
-			$status->{created_at},
-			$status->{user}->{screen_name},
-			$status->{text});
-		_println($line);
+	my $statuses = $t->home_timeline({count => 1000});
+	for my $status (@$statuses) {
+		my $source_app = _source($status->{source});
+		_println(
+			$status->{created_at}, ' <@',
+			$status->{user}->{screen_name}, '> ',
+			$status->{text}, ' (', $source_app, ')');
 	}
 }
 
 main::_main(@ARGV);
-
