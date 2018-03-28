@@ -13,9 +13,6 @@ use File::Spec::Functions;
 use YAML;
 use Cwd;
 
-local $Data::Dumper::Indent = 1;
-local $Data::Dumper::Sortkeys = 1;
-local $Data::Dumper::Terse = 1;
 
 sub _println {
 
@@ -33,7 +30,14 @@ sub _configure {
 		return undef;
 	}
 	my $settings = YAML::LoadFile($path);
-	# print Dumper($settings);
+
+	if (0) {
+		local $Data::Dumper::Indent = 1;
+		local $Data::Dumper::Sortkeys = 1;
+		local $Data::Dumper::Terse = 1;
+		# print Dumper($settings);
+	}
+
 	return $settings;
 }
 
@@ -42,8 +46,7 @@ sub _main {
 	my ($s) = @_;
 
 	# my $option_help = 0;
-	# Getopt::Long::GetOptions(
-			# 'help!' => \$option_help);
+	# Getopt::Long::GetOptions('help!' => \$option_help);
 
 	binmode(STDIN, ':utf8');
 	binmode(STDOUT, ':utf8');
