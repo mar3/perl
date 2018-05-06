@@ -27,6 +27,8 @@ sub _open {
 
 sub _test {
 
+	# このスコープでは connection_id() は常に同じ値を返す。
+
 	my $dbh = _open();
 
 	{
