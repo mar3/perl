@@ -34,8 +34,17 @@ sub _main {
 	binmode(STDOUT, ':utf8');
 	binmode(STDERR, ':utf8');
 
+	# エポックからの経過秒数(n)
+	my ($sec1, $usec) = Time::HiRes::gettimeofday();
+	printf("- 数値のタイムスタンプ\n> (%d, %d)\n", $sec1, $usec);
+
+	# "yyyy-mm-dd"
 	printf("- 日付:\n> [%s]\n", _get_date());
+
+	# "yyyy-mm-dd hh:mm:ss"
 	printf("- 普通のタイムスタンプ:\n> [%s]\n", _get_timestamp());
+
+	# "yyyy-mm-dd hh:mm:ss.fff"
 	printf("- 少し高精度なタイムスタンプ:\n> [%s]\n", _get_timestamp2());
 }
 
