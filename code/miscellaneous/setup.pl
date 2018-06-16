@@ -1178,7 +1178,9 @@ sub _setup_cpanm {
 }
 
 sub setup {
-	
+
+	system('apt', 'install', 'curl');
+	system('apt', 'install', 'net-tools');
 	_setup_bash();
 	_setup_bash_aliases();
 	_setup_git();
