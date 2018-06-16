@@ -777,6 +777,7 @@ sub _setup_cpanm {
 	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
 	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
 	out::println('[cpanm] ok.');
+	out::println('');
 }
 
 sub _has_git_installed {
@@ -1168,6 +1169,7 @@ sub _setup_cpanm {
 		out::println();
 		return;
 	}
+	out::println('[cpanm] begin setting.');
 	system('sudo', 'mkdir', '-p', '/root/bin');
 	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
 	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
@@ -1443,6 +1445,7 @@ sub _setup_cpanm {
 
 	if (!prompt::confirm('cpanm のセットアップをしますか？')) {
 		out::println('canceled.');
+		out::println();
 		return;
 	}
 	out::println('[cpanm] begin setting.');
@@ -1712,6 +1715,7 @@ sub _setup_cpanm {
 	system('sudo', 'curl', '-L', 'https://cpanmin.us/', '-o', '/root/bin/cpanm');
 	system('sudo', 'chmod', 'u+x', '/root/bin/cpanm');
 	out::println('[cpanm] ok.');
+	out::println('');
 }
 
 sub _has_git_installed {
