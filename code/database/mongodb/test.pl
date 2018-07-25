@@ -12,6 +12,7 @@
 
 
 use strict;
+use utf8;
 use MongoDB;
 use JSON;
 use Encode;
@@ -31,11 +32,8 @@ sub DateTime::TO_JSON {
 sub _dump1 {
  
 	my $e = shift;
-
-	$e = JSON::to_json($e, { utf8 => 1, convert_blessed => 1 });
-	# $e = JSON::to_json($e, { utf8 => 1, pretty => 1, convert_blessed => 1 });
-
-	_println($e);
+	my $json = JSON::to_json($e, { utf8 => 0, pretty => 1, convert_blessed => 1 });
+	_println($json);
 }
  
 #
@@ -45,7 +43,7 @@ sub _dump2 {
  
 	my $e = shift;
  
-	$e = JSON::to_json($e, { utf8 => 1, convert_blessed => 1 });
+	$e = JSON::to_json($e, { utf8 => 0, convert_blessed => 1 });
 	$e = JSON::from_json($e);
  
 	_println('_id: ', $e->{'_id'});
@@ -55,9 +53,11 @@ sub _dump2 {
  
 sub _main {
  
-	my $client = MongoDB::MongoClient->new(
-			host => '127.0.0.1',
-			port => 27017);
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
+
+	my $client = MongoDB::MongoClient->new(host => '127.0.0.1', port => 27017);
 
 	my $database = $client->get_database('test');
 
