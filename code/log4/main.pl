@@ -11,6 +11,7 @@
 #
 
 use strict;
+use utf8;
 use Carp;
 use Log::Log4perl;
 use Time::HiRes;
@@ -68,6 +69,10 @@ sub run {
 package main;
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	application::run();
 }
