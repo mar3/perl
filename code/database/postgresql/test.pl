@@ -2,6 +2,7 @@
 # coding: utf-8
 
 use strict;
+use utf8;
 use DBI;
 
 
@@ -11,6 +12,10 @@ sub _println {
 }
 
 sub _main {
+
+	binmode(STDIN, ':utf8');
+	binmode(STDOUT, ':utf8');
+	binmode(STDERR, ':utf8');
 
 	#
 	# データベースに接続します。
