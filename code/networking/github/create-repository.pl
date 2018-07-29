@@ -1,16 +1,9 @@
 #!/usr/bin/env perl
 # coding: utf-8
-#
-
 
 use strict;
 use utf8;
 use Net::GitHub;
-
-
-
-
-
 
 sub _println {
 
@@ -24,20 +17,14 @@ sub _main {
 	binmode(STDERR, ':utf8');
 
 	my $access_token = `cat .access_token`;
-	my $github = Net::GitHub->new(  # Net::GitHub::V3
-		access_token => $access_token
-	);
+	# Net::GitHub::V3
+	my $github = Net::GitHub->new(access_token => $access_token);
 
 	$github->repos->create({
-		name => 'test-test-test',
-		description => 'This is test...' });
+		name => 'simple-chat1',
+		description => '' });
 
 	_println('repository created.');
 }
 
 _main();
-
-
-
-
-
