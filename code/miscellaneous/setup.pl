@@ -1877,6 +1877,19 @@ sub _diagnose_os {
 		}
 	}
 	close($stream);
+
+	# Mac OS の判定
+	{
+		if (!open($stream, 'uname -a |')) {
+			out::println('[ERROR] Cannot execute uname -a.', $!);
+		}
+		my $line = <$stream>;
+		if ($line =~ m/Darwin/ms) {
+			$name = 'macOS';
+		}
+		close($stream);
+	}
+
 	return $name;
 }
 
@@ -1912,6 +1925,11 @@ sub _main {
 		out::println('[info] Good! I love CentOS!');
 		out::println();
 		centos::setup();
+	}
+	elsif ('macOS' eq $os_description) {
+		out::println('[info] macOS! Wonderful OS!');
+		out::println();
+		# centos::setup();
 	}
 	else {
 		out::println('[warn] unknown os. nothing todo...');
