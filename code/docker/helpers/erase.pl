@@ -63,13 +63,13 @@ sub _remove {
 	if(!length($container_id)) {
 		return;
 	}
-	system('docker', 'rm', $container_id);
+	system('sudo', 'docker', 'rm', $container_id);
 }
 
 sub _erase {
 
 	my $stream = undef;
-	if(!open($stream, 'docker ps -a |')) {
+	if(!open($stream, 'sudo docker ps -a |')) {
 		print('[ERROR] ', $!, "\n");
 		return;
 	}
