@@ -50,12 +50,17 @@ sub delete_local_branch {
 
 	my ($name) = @_;
 
-	my $prompt = sprintf('DELETE LOCAL REPOSITORY [%s] ? ', $name);
+	my $prompt = sprintf('delete local repository [%s] ? ', $name);
 	if (!prompt($prompt)) {
 		return;
 	}
 
 	system('git', 'branch', '--delete', $name);
+}
+
+sub show_local_branches {
+
+	system('git', 'branch', '--all');
 }
 
 sub erase_local_branches {
@@ -73,6 +78,8 @@ sub main {
 	binmode(STDERR, ':utf8');
 
 	erase_local_branches();
+
+	show_local_branches();
 }
 
 main();
