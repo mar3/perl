@@ -18,7 +18,7 @@ sub enum_local_branches {
 		chomp($line);
 		my $name = '';
 		# 現在開いているブランチはスキップしています。
-		if ($line =~ m/\A  ([0-9a-zA-Z-_]+)\z/ms) {
+		if ($line =~ m/\A  ([0-9a-zA-Z-_\.]+)\z/ms) {
 			$name = $1;
 			push(@local_branch_names, $name);
 		}
