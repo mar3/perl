@@ -33,18 +33,31 @@ sub _test {
 	print("\n");
 }
 
+sub _exec_by_arguments {
+
+	my $count = 0;
+
+	foreach my $e (@_) {
+		_test($e);
+		$count++;
+	}
+
+	return $count;
+}
+
 sub _main {
+
+	if (_exec_by_arguments(@_)) {
+		return;
+	}
 
 	_test(undef);
 	_test('');
-
 	_test('.');
 	_test('..');
 	_test('...');
 	_test('....');
-
 	_test('simple name');
-
 	_test('normal.suffix');
 	_test('normal.txt.suffix');
 	_test('a.b.c.d');
@@ -55,13 +68,11 @@ sub _main {
 	_test('xx.');
 	_test('xx..');
 	_test('xx...');
-
 	_test('.hidden file');
 	_test('.hidden file.suffix');
 	_test('..abnormal suffix');
 	_test('..abnormal name and.suffix');
 	_test('...abnormal name and.suffix');
-
 	_test('/root file');
 	_test('/root file.suffix');
 	_test('/.root hidden file');
