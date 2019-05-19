@@ -41,7 +41,7 @@ sub _create_new_connection{
 	my $dbfile = $conf->{dbfile};
 	my $options = {
 		AutoCommit => 1,
-		RaiseError => 0
+		RaiseError => 1
 	};
 	my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile", undef, undef, $options);
 	return $dbh;
@@ -51,21 +51,19 @@ sub open {
 
 	my ($this) = @_;
 	my $dbh = $this->{'dbh'};
-	if (!defined($dbh)) {
-		$dbh = _create_new_connection();
-		$this->{'dbh'} = $dbh;
+	if (defined($dbh)) {
+		return $dbh;
 	}
+	$dbh = _create_new_connection();
+	$this->{'dbh'} = $dbh;
 	return $dbh;
 }
 
-sub execute {
+sub execute_update {
 
 	my ($this, $sql, @parameters) = @_;
 	my $dbh = $this->open();
 	my $sth = $dbh->prepare($sql);
-	if (!defined($sth)) {
-		return undef;
-	}
 	$sth->execute(@parameters);
 	$sth->finish();
 	# $dbh->commit();
@@ -80,16 +78,23 @@ sub query {
 	return $sth;
 }
 
-sub DESTROY {
+sub close {
 
 	my ($this) = @_;
 	my $dbh = $this->{'dbh'};
-	$this->{'dbh'} = undef;
-	if (defined($dbh)) {
-		$dbh->finish();
+	if (!defined($dbh)) {
+		return;
 	}
-	out::println('[TRACE] <database::DESTROY()> connection closed.');
-	out::println('[TRACE] <database::DESTROY()> closed database instance.');
+	out::println('[TRACE] <database::close()> closing connection.');
+	$this->{'dbh'} = undef;
+	$dbh->disconnect();
+}
+
+sub DESTROY {
+
+	my ($this) = @_;
+	out::println('[TRACE] <database::DESTROY()> closing database instance.');
+	$this->close();
 }
 
 package application;
@@ -117,28 +122,28 @@ sub run {
 
 	{
 		my $db = new database();
-		$db->execute('CREATE TABLE OSHIRO_T(ID NVARCHAR2(1000), NAME NVARCHAR2(1000), PRIMARY KEY(ID))');
-		return;
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '犬山城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '姫路城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '松本城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '熊本城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '二条城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '松山城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '備中松山城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '松江城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '彦根城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '中城城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '勝連城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '竹田城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '首里城');
-		$db->execute('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '高知城');
+		# return;
+		$db->execute_update('CREATE TABLE OSHIRO_T(ID NVARCHAR2(1000), NAME NVARCHAR2(1000), PRIMARY KEY(ID))');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '犬山城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '姫路城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '松本城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '熊本城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '二条城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '松山城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '備中松山城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '松江城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '彦根城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '中城城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '勝連城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '竹田城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '首里城');
+		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '高知城');
 		my $statement = $db->query('SELECT * FROM OSHIRO_T');
 		while (my $row = $statement->fetch()) {
 			out::println('[TRACE] ', $row->[0], ':', $row->[1]);
 		}
 		$statement->finish();
-		$db->execute('DROP TABLE OSHIRO_T');
+		$db->execute_update('DROP TABLE OSHIRO_T');
 	}
 	out::println('[TRACE] Ok.');
 	out::println('[TRACE] --- END ---');
