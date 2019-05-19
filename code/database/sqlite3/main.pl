@@ -40,7 +40,7 @@ sub _create_new_connection{
 	my $conf = configuration_manager::configure();
 	my $dbfile = $conf->{dbfile};
 	my $options = {
-		AutoCommit => 1,
+		AutoCommit => 0,
 		RaiseError => 1
 	};
 	my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile", undef, undef, $options);
@@ -66,7 +66,11 @@ sub execute_update {
 	my $sth = $dbh->prepare($sql);
 	$sth->execute(@parameters);
 	$sth->finish();
-	# $dbh->commit();
+	if (!$dbh->{'AutoCommit'}) {
+	}
+	else {
+		out::println('[TRACE] (COMMIT)');
+	}
 }
 
 sub query {
@@ -78,6 +82,34 @@ sub query {
 	return $sth;
 }
 
+sub commit {
+
+	my ($this) = @_;
+	my $dbh = $this->{'dbh'};
+	if (!defined($dbh)) {
+		return;
+	}
+	if ($dbh->{'AutoCommit'}) {
+		return;
+	}
+	out::println('[TRACE] (COMMIT)');
+	$dbh->commit();
+}
+
+sub rollback {
+
+	my ($this) = @_;
+	my $dbh = $this->{'dbh'};
+	if (!defined($dbh)) {
+		return;
+	}
+	if ($dbh->{'AutoCommit'}) {
+		return;
+	}
+	out::println('[TRACE] (ROLLBACK)');
+	$dbh->rollback();
+}
+
 sub close {
 
 	my ($this) = @_;
@@ -85,6 +117,7 @@ sub close {
 	if (!defined($dbh)) {
 		return;
 	}
+	$this->rollback();
 	out::println('[TRACE] <database::close()> closing connection.');
 	$this->{'dbh'} = undef;
 	$dbh->disconnect();
@@ -118,11 +151,14 @@ sub run {
 
 	my ($this) = @_;
 
-	out::println('[TRACE] ### BEGIN ###');
+	# ========== 開始 ==========
+	{
+		out::println('[TRACE] ### BEGIN ###');
+	}
 
+	# ========== お城の登録と確認 ==========
 	{
 		my $db = new database();
-		# return;
 		$db->execute_update('CREATE TABLE OSHIRO_T(ID NVARCHAR2(1000), NAME NVARCHAR2(1000), PRIMARY KEY(ID))');
 		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '犬山城');
 		$db->execute_update('INSERT INTO OSHIRO_T VALUES(?, ?)', generate_id(), '姫路城');
@@ -144,9 +180,14 @@ sub run {
 		}
 		$statement->finish();
 		$db->execute_update('DROP TABLE OSHIRO_T');
+		$db->commit();
 	}
-	out::println('[TRACE] Ok.');
-	out::println('[TRACE] --- END ---');
+
+	# ========== 終了 ==========
+	{
+		out::println('[TRACE] Ok.');
+		out::println('[TRACE] --- END ---');
+	}
 }
 
 sub DESTROY {
