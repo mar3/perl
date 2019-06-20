@@ -76,13 +76,8 @@ sub _main {
 	binmode(STDOUT, ':utf8');
 	binmode(STDERR, ':utf8');
 
-
-
-
 	_println("[TRACE] ### START ###");
-
 	_test1();
-
 	_println("[TRACE] --- END ---");
 }
 
