@@ -37,37 +37,50 @@ sub _refresh_temp_file {
 	close($stream);
 }
 
-sub _test1 {
+sub _open_s3 {
 
 	# 設定ファイルを読みこみます。
 	my $conf = _configure();
-
-	# テストファイルをリフレッシュ
-	_refresh_temp_file();
-
-	# セッションを開始
 	_println("[TRACE] セッションを開いています...");
 	my $s3 = Net::Amazon::S3->new(
 		aws_access_key_id => $conf->{'aws_access_key_id'},
 		aws_secret_access_key => $conf->{'aws_secret_access_key'});
 	my $client = Net::Amazon::S3::Client->new(s3 => $s3);
 	_println("[TRACE] ok.");
+	return $client;
+}
 
+sub _open_bucket {
+
+	my ($name) = @_;
+	# セッションを開始
+	my $client = _open_s3();
 	# バケットを作成します。存在している場合は参照になります。
 	_println("[TRACE] 新しいバケットを作成しています...");
-	my $new_bucket = $client->create_bucket(
-		name => '00000111111100101000010110100110010110101110100101101010',
-		acl_short => 'private');
+	my $new_bucket = $client->create_bucket(name => $name, acl_short => 'private');
 	_println("[TRACE] ok.");
+	return $new_bucket;
+}
 
+sub _send {
+
+	my ($bucket_name, $left, $right) = @_;
+	# バケットを作成します。存在している場合は参照になります。
+	my $bucket = _open_bucket($bucket_name);
 	# オブジェクトを作成します。
 	_println("[TRACE] ファイルを作成しています...");
-	my $object = $new_bucket->object(key => 'ファイル.txt');
-	# オブジェクトにバイナリ文字列を書き込みます。
-	# $object->put('value');
-	# オブジェクトをファイルとしてアップロードします。
-	$object->put_filename('ファイル.txt');
+	my $object = $bucket->object(key => $right);
+	# アップロード
+	$object->put_filename($left);
 	_println("[TRACE] ok.");
+}
+
+sub _test1 {
+
+	# テストファイルをリフレッシュ
+	_refresh_temp_file();
+	# ファイルをバケットに送信します。
+	_send('xxxx-xxxxxxxx-xxxxxxx-xxxxxx-xxxxxx-xxxxxxxxx', 'ファイル.txt', 'ファイル.txt');
 }
 
 sub _main {
