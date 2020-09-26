@@ -29,6 +29,7 @@ sub _upload_file {
 
 	# あらかじめ作成しておいた Slack Application のアクセストークンを使用します。
 	my $access_token = `cat .access-token`;
+	chomp($access_token);
 
 	my $url = 'https://slack.com/api/files.upload';
 
